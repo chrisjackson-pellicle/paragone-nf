@@ -78,7 +78,7 @@ Optional arguments:
                                                       Default is 2
 
 
-## Step 03 Interpreting output data
+## Interpreting output data
 
 ls -1 results
 01_outgroup_added
@@ -105,6 +105,9 @@ ls -1 results
 22_alignments_stripped_names_MI
 23_alignments_stripped_names_MI_realigned
 in_and_outgroups_list.txt
+
+## Post-pipeline analyses
+
 
 ### Pipeline parameters and options
 
