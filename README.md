@@ -4,14 +4,48 @@ GAP tutorial for containerised Yang and Smith paralogy resolution pipeline
 
 # input data
 
+HybPiper paralogs directory OR
+HybPiper paralogs noChimers directory
+
+# description of data
+
+main contig selected by HybPiper, labelled .main, others labelled .1, .2 etc
+
 # running the pipeline
+
+nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4
+
 
 # output data
 
+ls -1 results
+01_outgroup_added
+02_alignments
+03_alignments_hmmcleaned
+04_alignments_internalcut
+05_tree_files
+06_trim_tips
+07_masked_tips
+08_cut_internal_branches
+09_selected_alignments
+10_realigned
+11_realigned_trees
+12_prune_MO_trees
+13_prune_RT_trees
+14_prune_MI_trees
+15_selected_alignments_MO
+16_selected_alignments_RT
+17_selected_alignments_MI
+18_alignments_stripped_names_MO
+19_alignments_stripped_names_MO_realigned
+20_alignments_stripped_names_RT
+21_alignments_stripped_names_RT_realigned
+22_alignments_stripped_names_MI
+23_alignments_stripped_names_MI_realigned
+in_and_outgroups_list.txt
+
 # general notes
 
-
-# NewTargets
 
 ## Description
 
