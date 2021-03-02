@@ -34,19 +34,10 @@ HEAD OF FILE HERE.
 Describe fasta header formatting - has to be same as HybPiper target file e.g. a suffix comprising a dash followed by a unique gene identifier.
 
 
-
-
-# description of data
-
-main contig selected by HybPiper, labelled .main, others labelled .1, .2 etc
-
-# running the pipeline
+## Step 02 Running the pipeline
 
 nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4
 
-# options
-
-            test
 
 Optional arguments:
 
@@ -75,7 +66,7 @@ Optional arguments:
                                                       Default is 2
 
 
-# output data
+## Step 03 Interpreting output data
 
 ls -1 results
 01_outgroup_added
@@ -103,7 +94,9 @@ ls -1 results
 23_alignments_stripped_names_MI_realigned
 in_and_outgroups_list.txt
 
-# general notes
+### general notes
+
+###################################
 
 
 ## Description
