@@ -36,11 +36,13 @@ Describe fasta header formatting - has to be same as HybPiper target file e.g. a
 ***Tutorial step 2:*** Copy 
 
 
-## Step 02: Running the pipeline
+## Running the pipeline
 
-nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4
+### Nextflow pipeline command
 
+`nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4`
 
+### Optional arguments
 Optional arguments:
 
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
@@ -95,6 +97,9 @@ ls -1 results
 22_alignments_stripped_names_MI
 23_alignments_stripped_names_MI_realigned
 in_and_outgroups_list.txt
+
+### Pipeline parameters and options
+
 
 ### general notes
 
