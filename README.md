@@ -23,7 +23,9 @@ If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf
 
 See the tutorial[LINK] for a full description of the files in these output folders. Briefly, folder `09_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `10_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see LINK) have been removed.        
 
-    Tutorial step 1: copy folder `09_paralogs` into your current working directory (i.e. the directory containing `xxx.nf` and `xxx.config`.
+***Tutorial step 1:***
+
+    Copy folder `09_paralogs` into your current working directory (i.e. the directory containing `xxx.nf` and `xxx.config`.
 
 ### Outgroup sequences
 
@@ -33,7 +35,9 @@ HEAD OF FILE HERE.
 
 Describe fasta header formatting - has to be same as HybPiper target file e.g. a suffix comprising a dash followed by a unique gene identifier.
 
-    Tutorial step 2; copy the fasta file containing outgroup sequences to your current working directory
+***Tutorial step 2:***
+
+    Copy the fasta file containing outgroup sequences to your current working directory.
 
 
 ## Running the pipeline
