@@ -9,6 +9,8 @@ https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
 
 https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
+
+This tuturial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `xxx.nf` and its corresponding config file `xxx.config`.
 # input data
 
 HybPiper paralogs directory OR
