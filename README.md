@@ -14,17 +14,13 @@ This tuturial assumes that you have Singularity and Nextflow installed, and that
 
 ## Step 1: input data
 
-If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf` to run HybPiper, it will have produced the following subfolders in your main results folder:
+If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
 
  - `09_paralogs`
  - `10_paralogs_noChimeras`
 
 See the LINK tutorial for a full description of the files in these output folders. Briefly, folder `09_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix '.main', whereas putative paralogs have the suffix '.0', '.1' etc. Folder `10_paralogs_noChimeras` contains the same data, except that contigs that are potentially chimeric (see LINK) have been removed.        
 
-
-
-HybPiper paralogs directory OR
-HybPiper paralogs noChimers directory
 
 # description of data
 
