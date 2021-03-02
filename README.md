@@ -38,7 +38,7 @@ Assuming all dependencies are installed, either:
 2. Clone the repository using the command `git clone https://github.com/chrisjackson-pellicle/NewTargets.git`. Unzip the `mega353.zip` file.
 
 
-[testing anchor link](# NewTargets)
+[testing anchor link](#newtargets)
 
 ## Scripts
 
