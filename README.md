@@ -2,6 +2,14 @@
 GAP tutorial for containerised Yang and Smith paralogy resolution pipeline 
 
 
+# input data
+
+# running the pipeline
+
+# output data
+
+# general notes
+
 
 # NewTargets
 
