@@ -17,6 +17,8 @@ nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile 
 
 # options
 
+            test
+
 Optional arguments:
 
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
