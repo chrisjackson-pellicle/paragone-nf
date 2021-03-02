@@ -19,7 +19,7 @@ If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf
  - `09_paralogs`
  - `10_paralogs_noChimeras`
 
-See the tutorial[LINK] for a full description of the files in these output folders. Briefly, folder `09_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `10_paralogs_noChimeras` contains the same data, except potentially chimeric contigs (see LINK) have been removed.        
+See the tutorial[LINK] for a full description of the files in these output folders. Briefly, folder `09_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `10_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see LINK) have been removed.        
 
 
 # description of data
