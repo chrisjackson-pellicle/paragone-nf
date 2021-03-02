@@ -13,6 +13,8 @@ This tuturial assumes that you have Singularity and Nextflow installed, and that
 
 Installation instructions for running on OSX via Vagrant here[LINK].
 
+Instructions for customising the Nextflow config file for your computing resoruces here[LINK].
+
 
 ## Input data
 
