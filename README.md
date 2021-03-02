@@ -2,6 +2,10 @@
 GAP tutorial for containerised Yang and Smith paralogy resolution pipeline 
 
 
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4209138/
+https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
+
+
 # input data
 
 HybPiper paralogs directory OR
