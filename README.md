@@ -12,9 +12,9 @@ https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 This tuturial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `xxx.nf` and its corresponding config file `xxx.config`.
 
 
-## Step 1.0 Input data
+## Input data
 
-### 1.1 Paralog sequences
+### Paralog sequences
 
 If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
 
@@ -23,9 +23,9 @@ If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf
 
 See the tutorial[LINK] for a full description of the files in these output folders. Briefly, folder `09_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `10_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see LINK) have been removed.        
 
-For this tutorial, copy folder `09_paralogs` into your current working directory (i.e. the directory containing `xxx.nf` and `xxx.config`.
+**Tutorial step 1:** Copy folder `09_paralogs` into your current working directory (i.e. the directory containing `xxx.nf` and `xxx.config`.
 
-### 1.2 Outgroup sequences
+### Outgroup sequences
 
  - fasta file contianing outgroup sequences for each gene in your target file e.g.
 
@@ -33,8 +33,10 @@ HEAD OF FILE HERE.
 
 Describe fasta header formatting - has to be same as HybPiper target file e.g. a suffix comprising a dash followed by a unique gene identifier.
 
+**Tutorial step 2:** Copy 
 
-## Step 02 Running the pipeline
+
+## Step 02: Running the pipeline
 
 nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4
 
