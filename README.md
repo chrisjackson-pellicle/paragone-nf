@@ -96,7 +96,7 @@ After running the pipeline, output can be found in the folder `results` (unless 
 
 **01_outgroup_added**
 
-This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added.
+This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. Fasta header for outgroup sequences will have the suffix `.outgroup`, e.g. `>sesame.outgroup`. 
 
 **02_alignments**
 Placeholder text.
