@@ -33,11 +33,18 @@ See the HybPiper tutorial[LINK] for a full description of the files in these out
 
 ### Outgroup sequences
 
- - fasta file containing outgroup sequences for each gene in your target file e.g.
+Some of the paralogy resolution methods require an outgroup sequence for each of your genes. These outgroup sequences can be provided in a fasta file, with the same fasta header formatting as your HybPiper target file. For example, if you have used the Angiosperms353 target file, and you wish to use sequences from Sesameas your outgroup, your outgroup fasta file might look like this:
 
-HEAD OF FILE HERE.
-
-Describe fasta header formatting - has to be same as HybPiper target file e.g. a suffix comprising a dash followed by a unique gene identifier.
+    >sesame-6995
+    gtgggatatgaacaaaatccattgagcttgtattactgtta...
+    >sesame-4757
+    ctggtgcgtcgagcacttctcttgagcagcaacaatggcgg...
+    >sesame-6933
+    gaagtagatgctgtggtggtggaagcattcgacatatgcac...
+    
+    ...etc
+    
+Again, note that the gene identifier following the dash in the fasta headers (e.g. '6995' for header '>sesame-6995') needs to correspond to a gene identifier in your target file. 
 
 ***Tutorial step 2:***
 
@@ -84,8 +91,15 @@ Optional arguments:
 
 ## Interpreting output data
 
-ls -1 results
-01_outgroup_added
+After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outir <name>` parameter. This will consist of 23 subfolders, as described below.
+
+
+###01_outgroup_added###
+
+This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. 
+
+
+
 02_alignments
 03_alignments_hmmcleaned
 04_alignments_internalcut
