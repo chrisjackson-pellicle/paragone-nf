@@ -33,7 +33,7 @@ See the HybPiper tutorial[LINK] for a full description of the files in these out
 
 ### Outgroup sequences
 
-Some of the paralogy resolution methods require an outgroup sequence for each of your genes. These outgroup sequences can be provided in a fasta file, with the same fasta header formatting as your HybPiper target file. For example, if you have used the Angiosperms353 target file, and you wish to use sequences from Sesameas your outgroup, your outgroup fasta file might look like this:
+Some of the paralogy resolution methods used in this pipeline require an outgroup sequence for each of your genes. These outgroup sequences can be provided in a fasta file (e.g. `outgroups.fasta`), with the same fasta header formatting as your HybPiper target file. For example, if you have used the Angiosperms353 target file, and you wish to use sequences from Sesame as your outgroup, your `outgroups.fasta` file might contain the following:
 
     >sesame-6995
     gtgggatatgaacaaaatccattgagcttgtattactgtta...
@@ -94,43 +94,88 @@ Optional arguments:
 After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outir <name>` parameter. This will consist of 23 subfolders, as described below.
 
 
-###01_outgroup_added###
+**01_outgroup_added**
 
-This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. 
+This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added.
 
+**02_alignments**
+Placeholder text.
 
+**03_alignments_hmmcleaned**
+Placeholder text.
 
-02_alignments
-03_alignments_hmmcleaned
-04_alignments_internalcut
-05_tree_files
-06_trim_tips
-07_masked_tips
-08_cut_internal_branches
-09_selected_alignments
-10_realigned
-11_realigned_trees
-12_prune_MO_trees
-13_prune_RT_trees
-14_prune_MI_trees
-15_selected_alignments_MO
-16_selected_alignments_RT
-17_selected_alignments_MI
-18_alignments_stripped_names_MO
-19_alignments_stripped_names_MO_realigned
-20_alignments_stripped_names_RT
-21_alignments_stripped_names_RT_realigned
-22_alignments_stripped_names_MI
-23_alignments_stripped_names_MI_realigned
-in_and_outgroups_list.txt
+**04_alignments_internalcut**
+Placeholder text.
+
+**05_tree_files**
+Placeholder text.
+
+**06_trim_tips**
+Placeholder text.
+
+**07_masked_tips**
+Placeholder text.
+
+**08_cut_internal_branches**
+Placeholder text.
+
+**09_selected_alignments**
+Placeholder text.
+
+**10_realigned**
+Placeholder text.
+
+**11_realigned_trees**
+Placeholder text.
+
+**12_prune_MO_trees**
+Placeholder text.
+
+**13_prune_RT_trees**
+Placeholder text.
+
+**14_prune_MI_trees**
+Placeholder text.
+
+**15_selected_alignments_MO**
+Placeholder text.
+
+**16_selected_alignments_RT**
+Placeholder text.
+
+**17_selected_alignments_MI**
+Placeholder text.
+
+**18_alignments_stripped_names_MO**
+Placeholder text.
+
+**19_alignments_stripped_names_MO_realigned**
+Placeholder text.
+
+**20_alignments_stripped_names_RT**
+Placeholder text.
+
+**21_alignments_stripped_names_RT_realigned**
+Placeholder text.
+
+**22_alignments_stripped_names_MI**
+Placeholder text.
+
+**23_alignments_stripped_names_MI_realigned**
+Placeholder text.
+
+**in_and_outgroups_list.txt**
+Placeholder text.
+
 
 ## Post-pipeline analyses
-
+Placeholder text.
 
 ### Pipeline parameters and options
-
+Placeholder text.
 
 ### general notes
+Placeholder text.
 
 ###################################
 
