@@ -208,11 +208,10 @@ Optional arguments:
                                                       Default is 1, so e.g. one alignment will be run at a time during alignment steps.
       --threads <int>                                 Number of threads per multiprocessing pool. Used for programs that support multi-threading (e.g. mafft,
                                                       IQTree). Default is 1.
-      --skip_process_01_hmmcleaner                    Skip the HmmCleaner step of process_01 (useful when HybPiper has been run with -nosupercontigs). 
-      --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. This pipeline will then realign mafft alignments with clustal omega, which does a better job in these cases.
-      --process_02_trim_bad_ends_cutoff <int>         Default is 5.
-      --process_02_trim_bad_ends_size <int>           Default is 15
-      --skip_process_02_trim_bad_ends
+      --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. Mafft alignments with re-aligned using clustal omega, which can do a better job in these cases. Default is off.
+      --process_02_trim_bad_ends_cutoff <int>         Number of bases either side of an internal gap that much match the reference before trimming stops.Default is 5.
+      --process_02_trim_bad_ends_size <int>           Number of continuous internal gap positions for an internal gap to be investigated. Default is 15.
+      --skip_process_02_trim_bad_ends                 Skips the step trimming the ends of internal gaps.
       --process_04_trim_tips_relative_cutoff          Default is 0.2
       --process_04_trim_tips_absolute_cutoff          Default is 0.4
       --process_06_branch_length_cutoff               Default is 0.3
