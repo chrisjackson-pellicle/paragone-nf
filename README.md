@@ -130,29 +130,13 @@ After running the pipeline, output can be found in the folder `results` (unless 
 
   Contains tree files in newick format, derived from re-aligned, re-trimmed sequences from the previous step. Trees are generated using [IQTree][3] with the settings `-m GTR+G -bb 1000 -bnni`.
 
-- **`12_prune_MO_trees`**
+- **`12_prune_MO_trees`**, **`13_prune_RT_trees`**, **`14_prune_MI_trees`**
 
-  Contains tree files for tree pruned using the MO method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
+  Contains tree files for trees pruned using the MO, RT and MI methods, respectively. See the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation.
 
-- **`13_prune_RT_trees`**
+- **`15_selected_alignments_MO`**, **`16_selected_alignments_RT`**, **`17_selected_alignments_MI`**
 
-  Contains tree files for tree pruned using the RT method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
-
-- **`14_prune_MI_trees`**
-
-  Contains tree files for tree pruned using the MI method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
-
-- **`15_selected_alignments_MO`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the MO method.
-
-- **`16_selected_alignments_RT`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the RT method.
-
-- **`17_selected_alignments_MI`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the MI method.
+  Contains fasta files of alignments corresponding to sequences present in tree files output by the MO, MI and RT methods, respectively.
 
 - **`18_alignments_stripped_names_MO`**
 
