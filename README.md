@@ -12,9 +12,9 @@ https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith.config`.
 
-Installation instructions for running on OSX via Vagrant here[LINK].
+Installation instructions for running on OSX via Vagrant here [LINK].
 
-Instructions for customising the Nextflow config file for your computing resoruces here[LINK].
+Instructions for customising the Nextflow config file for your computing resources here [LINK].
 
 
 ## Input data
@@ -26,7 +26,7 @@ If you have used the Nextflow pipeline `hybpiper_pipeline_v1_7.nf` to run HybPip
  - `11_paralogs`
  - `12_paralogs_noChimeras`
 
-See the HybPiper tutorial[LINK] for a full description of the files in these output folders. Briefly, folder `11_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `12_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see LINK) have been removed.        
+See the HybPiper tutorial [LINK] for a full description of the files in these output folders. Briefly, folder `11_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `12_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see [LINK]) have been removed.        
 
 ***Tutorial step 1:***
 
@@ -69,7 +69,7 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
 
     Run the pipeline using the command:
     
-    nextflow run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
+    nextflow run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --outgroups_file outgroups.fasta --outgroups sesame
 
 ## Interpreting output data
 
@@ -196,10 +196,10 @@ etc.
 
 Mandatory arguments:
 
-      --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files.
-      --outgroups_file <file>                      File containing fasta sequences of outgroup sequences for each gene.
-      --outgroups <taxon1,taxon2,taxon3...>        A comma-separated list of outgroup taxa to add, in order of 
-                                                   preference.  
+      --hybpiper_paralogs_directory <directory>       Path to folder containing HybPiper paralog fasta files.
+      --outgroups_file <file>                         File containing fasta sequences of outgroup sequences for each gene.
+      --outgroups <taxon1,taxon2,taxon3...>           A comma-separated list of outgroup taxa to add, in order of 
+                                                      preference.  
 Optional arguments:
 
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
@@ -212,25 +212,26 @@ Optional arguments:
       --process_02_trim_bad_ends_cutoff <int>         Number of bases either side of an internal gap that much match the reference before trimming stops.Default is 5.
       --process_02_trim_bad_ends_size <int>           Number of continuous internal gap positions for an internal gap to be investigated. Default is 15.
       --skip_process_02_trim_bad_ends                 Skips the step trimming the ends of internal gaps.
-      --process_04_trim_tips_relative_cutoff          Default is 0.2
-      --process_04_trim_tips_absolute_cutoff          Default is 0.4
-      --process_06_branch_length_cutoff               Default is 0.3
-      --process_06_minimum_taxa                       Default is 3 
-      --process_09_prune_paralog_MO_minimum_taxa      Default is 2
+      --process_04_trim_tips_relative_cutoff          When pruning long tips during the tree QC stage, provide a branch length for the maximum imbalance between sister tips allowed. Default is 0.2.
+      --process_04_trim_tips_absolute_cutoff          When pruning long tips during the tree QC stage, provide a branch length for the maximum allowed tip branch length. Default is 0.4.
+      --process_06_branch_length_cutoff               When pruning long internal branches (putative deep paralogs) during the tree QC stage, provide a branch length for the maximum allowed internal branch length. Default is 0.3.
+      --process_06_minimum_taxa                       After the final tree-pruning step prior to paralogy resolution, only retain trees with a minimum number of taxa remaining. Default is 3. 
+      --process_09_prune_paralog_MO_minimum_taxa      For the MO method, only process trees with a minimum number of taxa. Default is 2.
       --process_10_prune_paralogs_RT_minimum_ingroup_taxa
-                                                      Default is 2  
+                                                      For the RT method, only process trees with a minumum number of ingroup taxa. Default is 2. 
       --process_11_prune_paralogs_MI_relative_tip_cutoff
-                                                      Default is 0.2
+                                                      Default is 0.2.
       --process_11_prune_paralogs_MI_absolute_tip_cutoff
-                                                      Default is 0.4
-      --process_11_prune_paralogs_MI_minimim_taxa    
-                                                      Default is 2
+                                                      Default is 0.4.
+      --process_11_prune_paralogs_MI_minimum_taxa    
+                                                      Default is 2.
 
 ### General notes
 
 e.g.
 
 - Manually reviewing trees from a preliminary run to select appropriate cut-off values for tree pruning
+- Caveats of using these paralogy resolution approaches - relying largely on the fidelity of single-gene trees. Some loci will be better than others (i.e. short, low phylogenetic signal)
 
 etc.
 
