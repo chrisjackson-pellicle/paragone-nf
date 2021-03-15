@@ -9,7 +9,7 @@ https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
 https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 
-This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `xxx.nf` and its corresponding config file `xxx.config`.
+This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith.config`.
 
 Installation instructions for running on OSX via Vagrant here[LINK].
 
@@ -29,7 +29,7 @@ See the HybPiper tutorial[LINK] for a full description of the files in these out
 
 ***Tutorial step 1:***
 
-    Copy folder `09_paralogs` into your current working directory (i.e. the directory containing `xxx.nf` and `xxx.config`.
+    Copy folder `09_paralogs` into your current working directory (i.e. the directory containing `yang_and_smith_pipeline_v1_7.nf` and `yang_and_smith.config`.
 
 ### Outgroup sequences
 
@@ -68,7 +68,7 @@ See section [Pipeline parameters and options](pipeline-parameters-and-options) f
 
     Run the pipeline using the command:
     
-    nextflow_20_04 run alex_YS_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
+    nextflow_20_04 run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
 
 ### Optional arguments
 Optional arguments:
@@ -79,7 +79,7 @@ Optional arguments:
                                                       Default is 1.
       --threads <int>                                 Number of threads per pool instance. Default is 1.
       --skip_process_01_hmmcleaner                    Skip the HmmCleaner step of process_01 (useful when HybPiper has been run with -nosupercontigs). 
-      --no_supercontigs
+      --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. This pipeline will then realign mafft alignments with clustal omega, which does a better job in these cases.
       --process_02_trim_bad_ends_cutoff <int>         Default is 5.
       --process_02_trim_bad_ends_size <int>           Default is 15
       --skip_process_02_trim_bad_ends
@@ -108,13 +108,18 @@ After running the pipeline, output can be found in the folder `results` (unless 
 This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. Fasta header for outgroup sequences will have the suffix `.outgroup`, e.g. `>sesame.outgroup`. 
 
 **02_alignments**
-Placeholder text.
+Contains untrimmed and trimmed alignments for your paralog fasta files and outgroups. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
 
 **03_alignments_hmmcleaned**
-Placeholder text.
+Contains trimmed alignments that have been cleaned using [HmmCleaner][2] with default settings.
 
 **04_alignments_internalcut**
-Placeholder text.
+Contains HmmCleaned alignment that have undergone the following processes:
+
+- The 5' and 3' termini of paralog sequences are trimmed to the outgroup sequences. 
+- Paralog sequences are examined for internal gaps larger than 15 bases (default, user configurable), and sequence either side of the gap are trimmed until they match the given outgroup sequence [CJJ: change this to allow a different sequence, i.e. a more closely related target sequence] for at least five bases (default, user configurable).
+
+Note that this step can be skipped by using the `--skip_process_02_trim_bad_ends` flag. 
 
 **05_tree_files**
 Placeholder text.
@@ -190,5 +195,6 @@ Placeholder text.
 
 
 
-
+[1]: http://trimal.cgenomics.org/ "Link to trimal website"
+[2]: https://bmcecolevol.biomedcentral.com/articles/10.1186/s12862-019-1350-2 ""Link to HmmCleaner manuscript"
 
