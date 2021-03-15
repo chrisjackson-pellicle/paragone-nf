@@ -190,23 +190,24 @@ e.g.
 - Concanated IQtree
 - Astral
 
-ect, etc
+etc.
 
 ### Pipeline parameters and options
 
 Mandatory arguments:
 
       --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files.
-      --outgroups_file <file>                      File containing fasta sequences of target genes.
+      --outgroups_file <file>                      File containing fasta sequences of outgroup sequences for each gene.
       --outgroups <taxon1,taxon2,taxon3...>        A comma-separated list of outgroup taxa to add, in order of 
                                                    preference.  
 Optional arguments:
 
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
                                                       Available: standard (default), slurm
-      --pool <int>                                    Number of threads for Python multiprocessing pool. 
-                                                      Default is 1.
-      --threads <int>                                 Number of threads per pool instance. Default is 1.
+      --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in e.g. alignments and tree-building steps. 
+                                                      Default is 1, so e.g. one alignment will be run at a time during alignment steps.
+      --threads <int>                                 Number of threads per multiprocessing pool. Used for programs that support multi-threading (e.g. mafft,
+                                                      IQTree). Default is 1.
       --skip_process_01_hmmcleaner                    Skip the HmmCleaner step of process_01 (useful when HybPiper has been run with -nosupercontigs). 
       --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. This pipeline will then realign mafft alignments with clustal omega, which does a better job in these cases.
       --process_02_trim_bad_ends_cutoff <int>         Default is 5.
@@ -227,7 +228,12 @@ Optional arguments:
                                                       Default is 2
 
 ### General notes
-Placeholder text.
+
+e.g.
+
+- Manually reviewing trees from a preliminary run to select appropriate cut-off values for tree pruning
+
+etc.
 
 
 
