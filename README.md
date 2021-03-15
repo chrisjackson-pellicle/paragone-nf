@@ -2,7 +2,8 @@
 GAP tutorial for containerised Yang and Smith paralogy resolution pipeline 
 
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4209138/
+
+Link to the [Yang and Smith 2014 manuscript][4]
 
 https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
 
@@ -109,15 +110,15 @@ This folder contains your paralog fasta files, with outgroup sequences from your
 
 **02_alignments**
 
-Contains untrimmed and trimmed alignments for your paralog fasta files and outgroups. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
+Contains fasta files of untrimmed and trimmed alignments for your paralog fasta files and outgroups. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
 
 **03_alignments_hmmcleaned**
 
-Contains trimmed alignments that have been cleaned using [HmmCleaner][2] with default settings.
+Contains fasta files of trimmed alignments that have been cleaned using [HmmCleaner][2] with default settings.
 
 **04_alignments_internalcut**
 
-Contains HmmCleaned alignment that have undergone the following processes:
+Contains fasta files of HmmCleaned alignments that have undergone the following processes:
 
 - The 5' and 3' termini of paralog sequences are trimmed to the outgroup sequences. 
 - Paralog sequences are examined for internal gaps larger than 15 bases (default, user configurable), and sequence either side of the gap are trimmed until they match the given outgroup sequence [CJJ: change this to allow a different sequence, i.e. a more closely related target sequence] for at least five bases (default, user configurable).
@@ -130,7 +131,7 @@ Contains tree files in newick format, derived from trimmed and QC'd alignment. T
 
 **06_trim_tips**
 
-Contains treefiles with long tips pruned out via the following processes:
+Contains tree files with long tips pruned out via the following processes:
 
 - Trim tips that > relative_cutoff and >10 times longer than sister branch 
 - Trim any tips that are > absolute_cutoff
@@ -139,59 +140,75 @@ Default values for relative_cutoff and absolute_cutoff are 0.2 and 0.4, respecti
 
 **07_masked_tips**
 
-Contains pruned treefiles where close alleles from same sample have been removed. This process is intended to remove all but one of multiple terminals from the same sample, i.e. not deep paralogues but two alleles or paralogues that are very close together. The tip that has the most unambiguous, well-aligned characters in the trimmed alignment is kept.
+Contains pruned tree files where close alleles from same sample have been removed. This process is intended to remove all but one of multiple terminals from the same sample, i.e. not deep paralogues but two alleles or paralogues that are very close together. The tip that has the most unambiguous, well-aligned characters in the trimmed alignment is kept.
 
 **08_cut_internal_branches**
 
 Contains tree files with deep paralogs removed, by cutting long internal branches above a given length (default is 0.3, user configurable with the `--process_06_branch_length_cutoff <float>` parameter. Only trees with a minimum number of taxa after pruning are retained (default value 3, user configurable with the parameter `--process_06_minimum_taxa <int>`. 
 
 **09_selected_alignments**
-Placeholder text.
+
+Contains fasta files of alignments of sequences present in the final, QC'd trees from the previous step.
 
 **10_realigned**
-Placeholder text.
+
+Contains fasta files of re-aligned, re-trimmed sequences from the previous step.
 
 **11_realigned_trees**
-Placeholder text.
+
+Contains tree files in newick format, derived from re-aligned, re-trimmed sequences from the previous step. Trees are generated using [IQTree][3] with the settings `-m GTR+G -bb 1000 -bnni`.
 
 **12_prune_MO_trees**
-Placeholder text.
+
+Contains tree files for tree pruned using the MO method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
 
 **13_prune_RT_trees**
-Placeholder text.
+
+Contains tree files for tree pruned using the RT method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
 
 **14_prune_MI_trees**
-Placeholder text.
+
+Contains tree files for tree pruned using the MI method (see the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation).
 
 **15_selected_alignments_MO**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the MO method.
 
 **16_selected_alignments_RT**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the RT method.
 
 **17_selected_alignments_MI**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the MI method.
 
 **18_alignments_stripped_names_MO**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the MO method, with sequences names stripped and suitable for concatenation.
 
 **19_alignments_stripped_names_MO_realigned**
-Placeholder text.
+
+Contains fasta files of re-aligned sequences from MO alignements from the previous step.
 
 **20_alignments_stripped_names_RT**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the RT method, with sequences names stripped and suitable for concatenation.
 
 **21_alignments_stripped_names_RT_realigned**
-Placeholder text.
+
+Contains fasta files of re-aligned sequences from RT alignements from the previous step.
 
 **22_alignments_stripped_names_MI**
-Placeholder text.
+
+Contains fasta files of alignments corresponding to sequences present in tree files output by the MI method, with sequences names stripped and suitable for concatenation.
 
 **23_alignments_stripped_names_MI_realigned**
-Placeholder text.
+
+Contains fasta files of re-aligned sequences from RT alignements from the previous step.
 
 **in_and_outgroups_list.txt**
-Placeholder text.
+
+A text file containing a list of designated ingroup (`IN` in column 1) or outgroup (`OUT` in column 1) taxa, used by some of the paralogy resolution methods. 
 
 
 ## Post-pipeline analyses
@@ -210,4 +227,5 @@ Placeholder text.
 [1]: http://trimal.cgenomics.org/ "Link to trimal website"
 [2]: https://bmcecolevol.biomedcentral.com/articles/10.1186/s12862-019-1350-2 "Link to HmmCleaner manuscript"
 [3]: http://www.iqtree.org/ "Link to IQtree website"
+[4]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4209138/ "Link to the Yang and Smith 2014 manuscript"
 
