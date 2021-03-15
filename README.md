@@ -30,7 +30,7 @@ See the HybPiper tutorial[LINK] for a full description of the files in these out
 
 ***Tutorial step 1:***
 
-    Copy folder `09_paralogs` into your current working directory (i.e. the directory containing `yang_and_smith_pipeline_v1_7.nf` and `yang_and_smith.config`.
+    Copy folder `11_paralogs` into your current working directory (i.e. the directory containing `yang_and_smith_pipeline_v1_7.nf` and `yang_and_smith.config`.
 
 ### Outgroup sequences
 
@@ -69,7 +69,7 @@ See section [Pipeline parameters and options](pipeline-parameters-and-options) f
 
     Run the pipeline using the command:
     
-    nextflow_20_04 run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
+    nextflow run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
 
 ### Optional arguments
 Optional arguments:
