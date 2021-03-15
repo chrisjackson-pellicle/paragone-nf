@@ -108,12 +108,15 @@ After running the pipeline, output can be found in the folder `results` (unless 
 This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. Fasta header for outgroup sequences will have the suffix `.outgroup`, e.g. `>sesame.outgroup`. 
 
 **02_alignments**
+
 Contains untrimmed and trimmed alignments for your paralog fasta files and outgroups. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
 
 **03_alignments_hmmcleaned**
+
 Contains trimmed alignments that have been cleaned using [HmmCleaner][2] with default settings.
 
 **04_alignments_internalcut**
+
 Contains HmmCleaned alignment that have undergone the following processes:
 
 - The 5' and 3' termini of paralog sequences are trimmed to the outgroup sequences. 
@@ -122,16 +125,25 @@ Contains HmmCleaned alignment that have undergone the following processes:
 Note that this step can be skipped by using the `--skip_process_02_trim_bad_ends` flag. 
 
 **05_tree_files**
-Placeholder text.
+
+Contains tree files in newick format, derived from trimmed and QC'd alignment. Trees are generated using [IQTree][3] with the settings `-m GTR+G -bb 1000 -bnni`.
 
 **06_trim_tips**
-Placeholder text.
+
+Contains treefiles with long tips pruned out via the following processes:
+
+- Trim tips that > relative_cutoff and >10 times longer than sister branch 
+- Trim any tips that are > absolute_cutoff
+
+Default values for relative_cutoff and absolute_cutoff are 0.2 and 0.4, respectively. These values will be dataset specific and can be altered using the parameters `--process_04_trim_tips_relative_cutoff <float>` and `--process_04_trim_tips_absolute_cutoff <float>`.
 
 **07_masked_tips**
-Placeholder text.
+
+Contains pruned treefiles where close alleles from same sample have been removed. This process is intended to remove all but one of multiple terminals from the same sample, i.e. not deep paralogues but two alleles or paralogues that are very close together. The tip that has the most unambiguous, well-aligned characters in the trimmed alignment is kept.
 
 **08_cut_internal_branches**
-Placeholder text.
+
+Contains tree files with deep paralogs removed, by cutting long internal branches above a given length (default is 0.3, user configurable with the `--process_06_branch_length_cutoff <float>` parameter. Only trees with a minimum number of taxa after pruning are retained (default value 3, user configurable with the parameter `--process_06_minimum_taxa <int>`. 
 
 **09_selected_alignments**
 Placeholder text.
@@ -196,5 +208,6 @@ Placeholder text.
 
 
 [1]: http://trimal.cgenomics.org/ "Link to trimal website"
-[2]: https://bmcecolevol.biomedcentral.com/articles/10.1186/s12862-019-1350-2 ""Link to HmmCleaner manuscript"
+[2]: https://bmcecolevol.biomedcentral.com/articles/10.1186/s12862-019-1350-2 "Link to HmmCleaner manuscript"
+[3]: http://www.iqtree.org/ "Link to IQtree website"
 
