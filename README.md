@@ -58,7 +58,7 @@ It's fine if your `outgroups.fasta` file contains additional sequences. When run
 
 ### Nextflow pipeline command
 
-See section [###Pipeline parameters and options](pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
+See section [#Pipeline parameters and options](pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
     --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
     --outgroups_file <file>                      File containing fasta sequences of target genes
