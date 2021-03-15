@@ -20,7 +20,7 @@ Instructions for customising the Nextflow config file for your computing resoruc
 
 ### Paralog sequences
 
-If you have used the Nextflow pipeline `hybpiper_pipeline_v1_6_NO_INTRONERATE.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
+If you have used the Nextflow pipeline `hybpiper_pipeline_v1_7.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
 
  - `09_paralogs`
  - `10_paralogs_noChimeras`
@@ -46,7 +46,7 @@ Some of the paralogy resolution methods used in this pipeline require an outgrou
     
 Again, note that the gene identifier following the dash in the fasta headers (e.g. '6995' for header '>sesame-6995') needs to correspond to a gene identifier in your target file. 
 
-It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you'll provide one or more taxon names using the parameter e.g. `--outgroups sesame`.
+It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you'll provide one or more taxon names using the parameter e.g. `--outgroups sesame`. You can provide more than one outgroup taxon name using an comma-separated list, e.g. `--outgroups sesame,taxon2,taxon3` etc.
 
 ***Tutorial step 2:***
 
@@ -57,11 +57,18 @@ It's fine if your `outgroups.fasta` file contains additional sequences. When run
 
 ### Nextflow pipeline command
 
+See section [Pipeline parameters and options](pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
+
+    --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
+    --outgroups_file <file>                      File containing fasta sequences of target genes
+    --outgroups <taxon1,taxon2,taxon3...>        A comma-separated list of outgroup taxa to add, in order of 
+                                                 preference
+
 ***Tutorial step 3:***
 
     Run the pipeline using the command:
     
-    nextflow_20_04 run alex_YS_pipeline_v1_6.nf -c nextflow_alex_YS.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --target_file Angiosperms353_targetSequences.fasta --outgroups Ambtr --pool 4 --threads 4
+    nextflow_20_04 run alex_YS_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 06_paralogs --outgroups_file outgroups.fasta --outgroups sesame --pool 4 --threads 4
 
 ### Optional arguments
 Optional arguments:
