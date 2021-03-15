@@ -222,9 +222,9 @@ Optional arguments:
                                                       For the RT method, only process trees with a minumum number of ingroup taxa. Default is 2. 
       --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
                                                       Default is 0.2.
-      --process_11_prune_paralogs_MI_absolute_tip_cutoff
+      --process_11_prune_paralogs_MI_absolute_tip_cutoff <float>
                                                       Default is 0.4.
-      --process_11_prune_paralogs_MI_minimum_taxa    
+      --process_11_prune_paralogs_MI_minimum_taxa <int>   
                                                       Default is 2.
 
 ### General notes
