@@ -212,12 +212,49 @@ After running the pipeline, output can be found in the folder `results` (unless 
 
 
 ## Post-pipeline analyses
-Placeholder text.
+
+e.g.
+
+- Concanated IQtree
+- Astral
+
+ect, etc
 
 ### Pipeline parameters and options
-Placeholder text.
 
-### general notes
+Mandatory arguments:
+
+      --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files.
+      --outgroups_file <file>                      File containing fasta sequences of target genes.
+      --outgroups <taxon1,taxon2,taxon3...>        A comma-separated list of outgroup taxa to add, in order of 
+                                                   preference.  
+Optional arguments:
+
+      -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
+                                                      Available: standard (default), slurm
+      --pool <int>                                    Number of threads for Python multiprocessing pool. 
+                                                      Default is 1.
+      --threads <int>                                 Number of threads per pool instance. Default is 1.
+      --skip_process_01_hmmcleaner                    Skip the HmmCleaner step of process_01 (useful when HybPiper has been run with -nosupercontigs). 
+      --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. This pipeline will then realign mafft alignments with clustal omega, which does a better job in these cases.
+      --process_02_trim_bad_ends_cutoff <int>         Default is 5.
+      --process_02_trim_bad_ends_size <int>           Default is 15
+      --skip_process_02_trim_bad_ends
+      --process_04_trim_tips_relative_cutoff          Default is 0.2
+      --process_04_trim_tips_absolute_cutoff          Default is 0.4
+      --process_06_branch_length_cutoff               Default is 0.3
+      --process_06_minimum_taxa                       Default is 3 
+      --process_09_prune_paralog_MO_minimum_taxa      Default is 2
+      --process_10_prune_paralogs_RT_minimum_ingroup_taxa
+                                                      Default is 2  
+      --process_11_prune_paralogs_MI_relative_tip_cutoff
+                                                      Default is 0.2
+      --process_11_prune_paralogs_MI_absolute_tip_cutoff
+                                                      Default is 0.4
+      --process_11_prune_paralogs_MI_minimim_taxa    
+                                                      Default is 2
+
+### General notes
 Placeholder text.
 
 
