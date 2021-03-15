@@ -176,7 +176,7 @@ e.g.
 
 etc.
 
-### Pipeline parameters and options
+## Pipeline parameters and options
 
 Mandatory arguments:
 
@@ -190,7 +190,7 @@ Optional arguments:
                                                       Available: standard (default), slurm
       --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in e.g. alignments and tree-building steps. 
                                                       Default is 1, so e.g. one alignment will be run at a time during alignment steps.
-      --threads <int>                                 Number of threads per multiprocessing pool. Used for programs that support multi-threading (e.g. mafft,
+      --threads <int>                                 Number of threads per multiprocessing pool instance. Used for programs that support multi-threading (e.g. mafft,
                                                       IQTree). Default is 1.
       --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. Mafft alignments with re-aligned using clustal omega, which can do a better job in these cases. Default is off.
       --process_02_trim_bad_ends_cutoff <int>         Number of bases either side of an internal gap that much match the reference before trimming stops.Default is 5.
