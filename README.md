@@ -82,7 +82,7 @@ After running the pipeline, output can be found in the folder `results` (unless 
 
 - **`02_alignments`**
 
-  Contains fasta files of untrimmed and trimmed alignments for your paralog fasta files and outgroups. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
+  Contains fasta files of untrimmed and trimmed alignments for your paralog fasta files and outgroups. Alignments are performed with [mafft][5] or and/or [Clustal Omega][6]. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
 
 - **`03_alignments_hmmcleaned`**
 
@@ -228,4 +228,6 @@ etc.
 [2]: https://bmcecolevol.biomedcentral.com/articles/10.1186/s12862-019-1350-2 "Link to HmmCleaner manuscript"
 [3]: http://www.iqtree.org/ "Link to IQtree website"
 [4]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4209138/ "Link to the Yang and Smith 2014 manuscript"
+[5]: https://mafft.cbrc.jp/alignment/software/ "Link to mafft website"
+[6]: https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Clustal+Omega+Help+and+Documentation "Link to Clustal Omega website"
 
