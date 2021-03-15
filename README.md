@@ -47,7 +47,7 @@ Some of the paralogy resolution methods used in this pipeline require an outgrou
     
 Again, note that the gene identifier following the dash in the fasta headers (e.g. '6995' for header '>sesame-6995') needs to correspond to a gene identifier in your target file. 
 
-It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you'll provide one or more taxon names using the parameter e.g. `--outgroups sesame`. You can provide more than one outgroup taxon name using an comma-separated list, e.g. `--outgroups sesame,taxon2,taxon3` etc.
+It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you'll provide one or more taxon names using the parameter `--outgroups <taxon_name>`, e.g. `--outgroups sesame`, and only these taxa will be included as outgroups. You can provide more than one outgroup taxon name using an comma-separated list, e.g. `--outgroups sesame,taxon2,taxon3` etc.
 
 ***Tutorial step 2:***
 
