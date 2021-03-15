@@ -212,14 +212,15 @@ Optional arguments:
       --process_02_trim_bad_ends_cutoff <int>         Number of bases either side of an internal gap that much match the reference before trimming stops.Default is 5.
       --process_02_trim_bad_ends_size <int>           Number of continuous internal gap positions for an internal gap to be investigated. Default is 15.
       --skip_process_02_trim_bad_ends                 Skips the step trimming the ends of internal gaps.
-      --process_04_trim_tips_relative_cutoff          When pruning long tips during the tree QC stage, provide a branch length for the maximum imbalance between sister tips allowed. Default is 0.2.
-      --process_04_trim_tips_absolute_cutoff          When pruning long tips during the tree QC stage, provide a branch length for the maximum allowed tip branch length. Default is 0.4.
-      --process_06_branch_length_cutoff               When pruning long internal branches (putative deep paralogs) during the tree QC stage, provide a branch length for the maximum allowed internal branch length. Default is 0.3.
-      --process_06_minimum_taxa                       After the final tree-pruning step prior to paralogy resolution, only retain trees with a minimum number of taxa remaining. Default is 3. 
-      --process_09_prune_paralog_MO_minimum_taxa      For the MO method, only process trees with a minimum number of taxa. Default is 2.
-      --process_10_prune_paralogs_RT_minimum_ingroup_taxa
+      --process_04_trim_tips_relative_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch length for the maximum imbalance between sister tips allowed. Default is 0.2.
+      --process_04_trim_tips_absolute_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch length for the maximum allowed tip branch length. Default is 0.4.
+      --process_06_branch_length_cutoff <float>       When pruning long internal branches (putative deep paralogs) during the tree QC stage, provide a branch length for the maximum allowed internal branch length. Default is 0.3.
+      --process_06_minimum_taxa <int>                 After the final tree-pruning step prior to paralogy resolution, only retain trees with a minimum number of taxa remaining. Default is 3. 
+      --process_09_prune_paralog_MO_minimum_taxa <int>
+                                                      For the MO method, only process trees with a minimum number of taxa. Default is 2.
+      --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
                                                       For the RT method, only process trees with a minumum number of ingroup taxa. Default is 2. 
-      --process_11_prune_paralogs_MI_relative_tip_cutoff
+      --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
                                                       Default is 0.2.
       --process_11_prune_paralogs_MI_absolute_tip_cutoff
                                                       Default is 0.4.
