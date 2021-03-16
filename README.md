@@ -10,11 +10,11 @@ https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
 https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 
-This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith.config`.
+This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith_v1_7.config`.
 
-Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the Singularity container and the Nextflow pipeline script and config file will differ from those described in the instructions. 
+Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the `yang_and_smith.sif` Singularity container and the Nextflow pipeline script/config file (`yang_and_smith_pipeline_v1_7.nf` / `yang_and_smith_v1_7.config`) will differ from those described in the instructions. 
 
-Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes described in the `*.config` file will differ to those described in the instructions. 
+Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes listed in the `yang_and_smith_v1_7.config` file will differ to those described in the instructions. 
 
 
 ## Input data
