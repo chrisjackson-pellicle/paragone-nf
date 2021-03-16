@@ -12,9 +12,9 @@ https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith.config`.
 
-Installation instructions for running on OSX via Vagrant here [LINK].
+Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the Singularity container and the Nextflow pipeline script and config file will differ from those described in the instructions. 
 
-Instructions for customising the Nextflow config file for your computing resources here [LINK].
+Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes described in the `*.config` file will differ to those described in the instructions. 
 
 
 ## Input data
@@ -232,4 +232,5 @@ etc.
 [6]: https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Clustal+Omega+Help+and+Documentation "Link to Clustal Omega website"
 [7]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Output-folders-and-files "Link to HybPiper-RBGV Wiki entry"
 [8]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Additional-pipeline-features-and-details#detection-of-putative-chimeric-contigs "Link to HybPiper-RBGV Wiki entry"
-
+[9]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Running-on-a-Mac-(macOS)-with-Vagrant "Link to Vagrant macOS instructions"
+[10]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Additional-pipeline-features-and-details#managing-computing-resources "Link to customising Nexflow config instructions"
