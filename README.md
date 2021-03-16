@@ -26,7 +26,7 @@ If you have used the Nextflow pipeline `hybpiper_pipeline_v1_7.nf` to run HybPip
  - `11_paralogs`
  - `12_paralogs_noChimeras`
 
-See the HybPiper tutorial [LINK] for a full description of the files in these output folders. Briefly, folder `11_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `12_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see [LINK]) have been removed.        
+See the HybPiper-RBGV wiki entry [Output folders and files][7] for a full description of the files in these output folders. Briefly, folder `11_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `12_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see [LINK]) have been removed.        
 
 ***Tutorial step 1:***
 
@@ -230,4 +230,5 @@ etc.
 [4]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4209138/ "Link to the Yang and Smith 2014 manuscript"
 [5]: https://mafft.cbrc.jp/alignment/software/ "Link to mafft website"
 [6]: https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Clustal+Omega+Help+and+Documentation "Link to Clustal Omega website"
+[7]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Output-folders-and-files "Link to HybPiper RBGV Wiki entry"
 
