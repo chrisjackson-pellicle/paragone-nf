@@ -10,18 +10,18 @@ https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
 https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 
-This tutorial assumes that you have Singularity and Nextflow installed, and that you have the Y_and_S Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang_and_smith_pipeline_v1_7.nf` and its corresponding config file `yang_and_smith_v1_7.config`.
+This tutorial assumes that you have Singularity and Nextflow installed, and that you have the `yang_and_smith.sif` Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang-and-smith-rbgv-pipeline.nf` and its corresponding config file `yang-and-smith-rbgv.config`.
 
-Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the `yang_and_smith.sif` Singularity container and the Nextflow pipeline script/config file (`yang_and_smith_pipeline_v1_7.nf` / `yang_and_smith_v1_7.config`) will differ from those described in the instructions. 
+Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the `yang_and_smith.sif` Singularity container and the Nextflow pipeline script/config file (`yang-and-smith-rbgv-pipeline.nf` / `yang-and-smith-rbgv.config`) will differ from those described in the instructions. 
 
-Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes listed in the `yang_and_smith_v1_7.config` file will differ to those described in the instructions. 
+Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes listed in the `yang-and-smith-rbgv.config` file will differ to those described in the instructions. 
 
 
 ## Input data
 
 ### Paralog sequences
 
-If you have used the Nextflow pipeline `hybpiper_pipeline_v1_7.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
+If you have used the Nextflow pipeline `hybpiper-rbgv-pipeline.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
 
  - `11_paralogs`
  - `12_paralogs_noChimeras`
@@ -30,7 +30,7 @@ See the HybPiper-RBGV wiki entry [Output folders and files][7] for a full descri
 
 ***Tutorial step 1:***
 
-    Copy folder `11_paralogs` into your current working directory (i.e. the directory containing `yang_and_smith_pipeline_v1_7.nf` and `yang_and_smith.config`.
+    Copy folder `11_paralogs` into your current working directory (i.e. the directory containing `yang-and-smith-rbgv-pipeline.nf` and `yang-and-smith-rbgv.config`.
 
 ### Outgroup sequences
 
@@ -69,7 +69,7 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
 
     Run the pipeline using the command:
     
-    nextflow run yang_and_smith_pipeline_v1_7.nf -c yang_and_smith.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --outgroups_file outgroups.fasta --outgroups sesame
+    nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --outgroups_file outgroups.fasta --outgroups sesame
 
 ## Interpreting output data
 
