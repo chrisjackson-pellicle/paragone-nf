@@ -101,7 +101,6 @@ process align_paralogs_01 {
   // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
-  conda '/home/cjackson/.conda/envs/py37'
 
   input:
   file(target_file) from outgroups_file_ch
