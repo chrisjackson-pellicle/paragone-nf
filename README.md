@@ -14,8 +14,6 @@ This tutorial assumes that you have Singularity and Nextflow installed, and that
 
 Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the `yang_and_smith.sif` Singularity container and the Nextflow pipeline script/config file (`yang-and-smith-rbgv-pipeline.nf` / `yang-and-smith-rbgv.config`) will differ from those described in the instructions. 
 
-Instructions for customising the Nextflow config file for your computing resources can be found [here][10]. Note that the Nextflow processes listed in the `yang-and-smith-rbgv.config` file will differ to those described in the instructions. 
-
 
 ## Input data
 
@@ -210,6 +208,12 @@ Optional arguments:
                                                       Default is 0.4.
       --process_11_prune_paralogs_MI_minimum_taxa <int>   
                                                       Default is 2.
+
+
+
+## Managing computing resources
+
+Please see [here][10] for instructions on how to customise the file `yang-and-smith-rbgv.config` for your particualar computing resources. Note that the Nextflow processes listed in the `yang-and-smith-rbgv.config` file will differ to those described in the instructions, but the same principles apply.  
 
 ### General notes
 
