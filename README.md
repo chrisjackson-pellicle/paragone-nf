@@ -55,11 +55,11 @@ Please see the Wiki entry [Running on Linux][19].
 
 ## Running the pipeline on a Mac (macOS)
 
-Please see the Wiki entry [Running on a Mac][17].
+Please see the Wiki entry [Running on a Mac][17]. #CJJ to update for yang and smith
 
 ## Running the pipeline on a PC (Windows)
 
-Please see the Wiki entry [Running on a PC][18].
+Please see the Wiki entry [Running on a PC][18]. #CJJ to update for yang and smith
 
 
 
@@ -95,7 +95,7 @@ For a full explanation of output folders and files, please see the Wiki entry [O
 
 e.g.
 
-- Concanated IQtree
+- Concatenated IQtree
 - Astral
 
 etc.
