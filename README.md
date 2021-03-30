@@ -63,7 +63,7 @@ Please see the Wiki entry [Running on a PC][18].
 
 
 
-### Nextflow pipeline command
+### Nextflow pipeline options and parameters
 
 See section [Pipeline parameters and options](#pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
@@ -78,100 +78,17 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
     
     nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --outgroups_file outgroups.fasta --outgroups sesame
 
-## Interpreting output data
+## Output folders and files
 
-After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outir <name>` parameter. This will consist of 23 subfolders, as described below.
+After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outdir <name>` parameter. This will consist of 23 subfolders. If you're just after the aligned .fasta files for each of your target genes as output by each of the paralogy resolution methods, the three main output folders of interest are probably:
+
+    19_alignments_stripped_names_MO_realigned
+    21_alignments_stripped_names_RT_realigned
+    23_alignments_stripped_names_MI_realigned
 
 
-- **`01_outgroup_added`**
+For a full explanation of output folders and files, please see the Wiki entry [Output folders and files][20].
 
-  This folder contains your paralog fasta files, with outgroup sequences from your `outgroups.fasta` added. Fasta header for outgroup sequences will have the suffix `.outgroup`, e.g. `>sesame.outgroup`. 
-
-- **`02_alignments`**
-
-  Contains fasta files of untrimmed and trimmed alignments for your paralog fasta files and outgroups. Alignments are performed with [mafft][5] or and/or [Clustal Omega][6]. Trimming is performed using [trimal][1] using the settings `-gapthreshold 0.12 -terminalonly -gw 1`. 
-
-- **`03_alignments_hmmcleaned`**
-
-  Contains fasta files of trimmed alignments that have been cleaned using [HmmCleaner][2] with default settings.
-
-- **`04_alignments_internalcut`**
-
-  Contains fasta files of HmmCleaned alignments that have undergone the following processes:
-
-  - The 5' and 3' termini of paralog sequences are trimmed to the outgroup sequences. 
-  - Paralog sequences are examined for internal gaps larger than 15 bases (default, user configurable), and sequence either side of the gap are trimmed until they match the given outgroup sequence [CJJ: change this to allow a different sequence, i.e. a more closely related target sequence] for at least five bases (default, user configurable).
-
-  Note that this step can be skipped by using the `--skip_process_02_trim_bad_ends` flag. 
-
-- **`05_tree_files`**
-
-  Contains tree files in newick format, derived from trimmed and QC'd alignment. Trees are generated using [IQTree][3] with the settings `-m GTR+G -bb 1000 -bnni`.
-
-- **`06_trim_tips`**
-
-  Contains tree files with long tips pruned out via the following processes:
-
-  - Trim tips that > relative_cutoff and >10 times longer than sister branch 
-  - Trim any tips that are > absolute_cutoff
-
-  Default values for relative_cutoff and absolute_cutoff are 0.2 and 0.4, respectively. These values will be dataset specific and can be altered using the parameters `--process_04_trim_tips_relative_cutoff <float>` and `--process_04_trim_tips_absolute_cutoff <float>`.
-
-- **`07_masked_tips`**
-
-  Contains pruned tree files where close alleles from same sample have been removed. This process is intended to remove all but one of multiple terminals from the same sample, i.e. not deep paralogues but two alleles or paralogues that are very close together. The tip that has the most unambiguous, well-aligned characters in the trimmed alignment is kept.
-
-- **`08_cut_internal_branches`**
-
-  Contains tree files with deep paralogs removed, by cutting long internal branches above a given length (default is 0.3, user configurable with the `--process_06_branch_length_cutoff <float>` parameter. Only trees with a minimum number of taxa after pruning are retained (default value 3, user configurable with the parameter `--process_06_minimum_taxa <int>`. 
-
-- **`09_selected_alignments`**
-
-  Contains fasta files of alignments of sequences present in the final, QC'd trees from the previous step.
-
-- **`10_realigned`**
-
-  Contains fasta files of re-aligned, re-trimmed sequences from the previous step.
-
-- **`11_realigned_trees`**
-
-  Contains tree files in newick format, derived from re-aligned, re-trimmed sequences from the previous step. Trees are generated using [IQTree][3] with the settings `-m GTR+G -bb 1000 -bnni`.
-
-- **`12_prune_MO_trees`**, **`13_prune_RT_trees`**, **`14_prune_MI_trees`**
-
-  Contains tree files for trees pruned using the MO, RT and MI methods, respectively. See the [Yang and Smith 2014 manuscript][4], Figure 1 for an explanation.
-
-- **`15_selected_alignments_MO`**, **`16_selected_alignments_RT`**, **`17_selected_alignments_MI`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the MO, MI and RT methods, respectively.
-
-- **`18_alignments_stripped_names_MO`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the MO method, with sequences names stripped and suitable for concatenation.
-
-- **`19_alignments_stripped_names_MO_realigned`**
-
-  Contains fasta files of re-aligned sequences from MO alignements from the previous step.
-
-- **`20_alignments_stripped_names_RT`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the RT method, with sequences names stripped and suitable for concatenation.
-
-- **`21_alignments_stripped_names_RT_realigned`**
-
-  Contains fasta files of re-aligned sequences from RT alignements from the previous step.
-
-- **`22_alignments_stripped_names_MI`**
-
-  Contains fasta files of alignments corresponding to sequences present in tree files output by the MI method, with sequences names stripped and suitable for concatenation.
-
-- **`23_alignments_stripped_names_MI_realigned`**
-
-  Contains fasta files of re-aligned sequences from RT alignements from the previous step.
-
-- **`in_and_outgroups_list.txt`**
-
-  A text file containing a list of designated ingroup (`IN` in column 1) or outgroup (`OUT` in column 1) taxa, used by some of the paralogy resolution methods. 
 
 
 ## Post-pipeline analyses
@@ -255,4 +172,5 @@ etc.
 [16]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV "Link to HybPiper-RBGV github"
 [17]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-a-Mac-(macOS)-with-Vagrant "Link to Running-on-a-Mac Wiki entry"
 [18]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-a-PC-(Windows)-with-Vagrant "Link to Running-on-a-PC Wiki entry"
-[19]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-Linux "link to Running-on-Linux Wiki entry"
+[19]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-Linux "Link to Running-on-Linux Wiki entry"
+[20]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Output-folders-and-files "Link to Output-folders-and-files Wiki entry"
