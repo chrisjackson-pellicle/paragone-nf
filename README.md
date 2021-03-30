@@ -82,9 +82,9 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
 
 After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outdir <name>` parameter. This will consist of 23 subfolders. If you're just after the aligned .fasta files for each of your target genes as output by each of the paralogy resolution methods, the three main output folders of interest are probably:
 
-    19_alignments_stripped_names_MO_realigned
-    21_alignments_stripped_names_RT_realigned
-    23_alignments_stripped_names_MI_realigned
+- `19_alignments_stripped_names_MO_realigned`
+- `21_alignments_stripped_names_RT_realigned`
+- `23_alignments_stripped_names_MI_realigned`
 
 
 For a full explanation of output folders and files, please see the Wiki entry [Output folders and files][20].
@@ -99,6 +99,21 @@ e.g.
 - Astral
 
 etc.
+
+## General information
+
+For details on adapting the pipeline to run on local and HPC computing resources, see [here][].
+
+## Bug fixes and changes (WIP)
+
+Please see the Wiki entry [Bug fixes and changes][].
+
+
+
+## Issues still to deal with (WIP)
+
+Please see the Wiki entry [Issues][].
+
 
 ## Pipeline parameters and options
 
@@ -135,6 +150,7 @@ Optional arguments:
       --process_11_prune_paralogs_MI_minimum_taxa <int>   
                                                       Default is 2.
 
+Please see the Wiki entry [Additional pipeline features and details][] for further explanation of the parameters above, and general pipeline functionality.
 
 
 ## Managing computing resources
@@ -149,9 +165,6 @@ e.g.
 - Caveats of using these paralogy resolution approaches - relying largely on the fidelity of single-gene trees. Some loci will be better than others (i.e. short, low phylogenetic signal)
 
 etc.
-
-
-
 
 
 [1]: http://trimal.cgenomics.org/ "Link to trimal website"
