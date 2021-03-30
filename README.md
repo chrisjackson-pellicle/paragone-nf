@@ -1,13 +1,17 @@
 # HybSeq Paralogy Resolution Tutorial
-GAP tutorial for containerised Yang and Smith paralogy resolution pipeline 
+
+##Original orthology inference manuscript, documentation and scripts
+
+This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the bioRxiv manuscript [here][11]. The original documentation and scripts can be found [here][12].
 
 
+##Yang_and_Smith-RBGV: containerised and pipelined using Singularity and Nextflow
 
-Link to the [Yang and Smith 2014 manuscript][4]
+To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container containing the Linux distribution Ubuntu 18.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well additonal new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [mafft][5], [BioPython][15], [HMMCleaner][2], [trimal][1]). The container is called `yang_and_smith.sif`.
 
-https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2
+To run HybPiper using this container, I’ve provided a [Nextflow][14] pipeline that uses the software in the Singularity container. This pipeline runs all HybPiper steps with a single command. The pipeline script is called hybpiper-rbgv-pipeline.nf. It comes with an associated config file called hybpiper-rbgv.config. The only input required is a folder of sequencing reads for your samples, and a target file in .fasta format. The Nextflow pipeline will automatically generate the namelist.txt file required by some of the HybPiper scripts, and will run all HybPiper scripts on each sample in parallel. It also includes an optional read-trimmming step to QC your reads prior to running HybPiper, using the software Trimmomatic. The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be configured by the user by modifying the provided config file. The pipeline can be run directly on your local computer, and on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
+To sim
 
-https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/
 
 
 This tutorial assumes that you have Singularity and Nextflow installed, and that you have the `yang_and_smith.sif` Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang-and-smith-rbgv-pipeline.nf` and its corresponding config file `yang-and-smith-rbgv.config`.
@@ -238,3 +242,8 @@ etc.
 [8]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Additional-pipeline-features-and-details#detection-of-putative-chimeric-contigs "Link to HybPiper-RBGV Wiki entry"
 [9]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Running-on-a-Mac-(macOS)-with-Vagrant "Link to Vagrant macOS instructions"
 [10]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV/wiki/Additional-pipeline-features-and-details#managing-computing-resources "Link to customising Nexflow config instructions"
+[11]: https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2 "Link to Yang 2021 bioarchives manuscript"
+[12]: https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/ "Link to Yang and Smith Bitbucket"
+[13]:https://sylabs.io/docs/ "Link to Singularity website"
+[14]:https://www.nextflow.io/ "Link to Nextflow website"
+[15]:https://biopython.org/ "Link to BioPython website"
