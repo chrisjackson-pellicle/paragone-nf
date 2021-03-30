@@ -9,21 +9,14 @@ This pipeline makes use of the **paralogy resolution** (also described as **orth
 
 To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container containing the Linux distribution Ubuntu 18.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well additonal new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [mafft][5], [BioPython][15], [HMMCleaner][2], [trimal][1]). The container is called `yang_and_smith.sif`.
 
-To run HybPiper using this container, I’ve provided a [Nextflow][14] pipeline that uses the software in the Singularity container. This pipeline runs all HybPiper steps with a single command. The pipeline script is called hybpiper-rbgv-pipeline.nf. It comes with an associated config file called hybpiper-rbgv.config. The only input required is a folder of sequencing reads for your samples, and a target file in .fasta format. The Nextflow pipeline will automatically generate the namelist.txt file required by some of the HybPiper scripts, and will run all HybPiper scripts on each sample in parallel. It also includes an optional read-trimmming step to QC your reads prior to running HybPiper, using the software Trimmomatic. The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be configured by the user by modifying the provided config file. The pipeline can be run directly on your local computer, and on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
-To sim
-
-
-
-This tutorial assumes that you have Singularity and Nextflow installed, and that you have the `yang_and_smith.sif` Singularity image downloaded. In addition, you should have the Nextflow pipeline script `yang-and-smith-rbgv-pipeline.nf` and its corresponding config file `yang-and-smith-rbgv.config`.
-
-Instructions for running Nextflow/Singularity on a Mac (macOS) via Vagrant can be found [here][9]. Note that the `yang_and_smith.sif` Singularity container and the Nextflow pipeline script/config file (`yang-and-smith-rbgv-pipeline.nf` / `yang-and-smith-rbgv.config`) will differ from those described in the instructions. 
+To run the paralogy resolution pipeline using this container, I’ve provided a [Nextflow][14] script that uses the software in the Singularity container. This pipeline runs all steps with a single command. The pipeline script is called `yang-and-smith-rbgv-pipeline.nf`. It comes with an associated config file called `yang-and-smith-rbgv.config`. The only input required is a folder containing `.fasta` files for each of your target-capture loci, including paralogs, and a `.fasta` file containing outgroup sequences (used by some of the paralogy resolution methods, see below). The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be configured by the user by modifying the provided config file. The pipeline can be run directly on your local computer, and on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
 
 
 ## Input data
 
 ### Paralog sequences
 
-If you have used the Nextflow pipeline `hybpiper-rbgv-pipeline.nf` to run HybPiper, it will have produced the following subfolders in your main `results` folder:
+If you have used the Nextflow pipeline `hybpiper-rbgv-pipeline.nf` to run HybPiper, as described [here][16], your main `results` folder will contain the following subfolders:
 
  - `11_paralogs`
  - `12_paralogs_noChimeras`
@@ -56,7 +49,19 @@ It's fine if your `outgroups.fasta` file contains additional sequences. When run
     Copy the fasta file containing outgroup sequences to your current working directory.
 
 
-## Running the pipeline
+## Running the pipeline on Linux
+
+Please see the Wiki entry [Running on Linux][19].
+
+## Running the pipeline on a Mac (macOS)
+
+Please see the Wiki entry [Running on a Mac][17].
+
+## Running the pipeline on a PC (Windows)
+
+Please see the Wiki entry [Running on a PC][18].
+
+
 
 ### Nextflow pipeline command
 
@@ -247,3 +252,7 @@ etc.
 [13]:https://sylabs.io/docs/ "Link to Singularity website"
 [14]:https://www.nextflow.io/ "Link to Nextflow website"
 [15]:https://biopython.org/ "Link to BioPython website"
+[16]: https://github.com/chrisjackson-pellicle/HybPiper-RBGV "Link to HybPiper-RBGV github"
+[17]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-a-Mac-(macOS)-with-Vagrant "Link to Running-on-a-Mac Wiki entry"
+[18]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-a-PC-(Windows)-with-Vagrant "Link to Running-on-a-PC Wiki entry"
+[19]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-Linux "link to Running-on-Linux Wiki entry"
