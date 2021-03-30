@@ -102,7 +102,8 @@ etc.
 
 ## General information
 
-For details on adapting the pipeline to run on local and HPC computing resources, see [here][].
+For details on adapting the pipeline to run on local and HPC computing resources, see [here][22].
+
 
 ## Bug fixes and changes (WIP)
 
@@ -150,12 +151,8 @@ Optional arguments:
       --process_11_prune_paralogs_MI_minimum_taxa <int>   
                                                       Default is 2.
 
-Please see the Wiki entry [Additional pipeline features and details][] for further explanation of the parameters above, and general pipeline functionality.
+Please see the Wiki entry [Additional pipeline features and details][32] for further explanation of the parameters above, and general pipeline functionality.
 
-
-## Managing computing resources
-
-Please see [here][10] for instructions on how to customise the file `yang-and-smith-rbgv.config` for your particualar computing resources. Note that the Nextflow processes listed in the `yang-and-smith-rbgv.config` file will differ to those described in the instructions, but the same principles apply.  
 
 ### General notes
 
@@ -187,3 +184,5 @@ etc.
 [18]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-a-PC-(Windows)-with-Vagrant "Link to Running-on-a-PC Wiki entry"
 [19]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Running-on-Linux "Link to Running-on-Linux Wiki entry"
 [20]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Output-folders-and-files "Link to Output-folders-and-files Wiki entry"
+[21]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Additional-pipeline-features-and-details "Link to Additional-pipeline-features-and-details Wiki entry"
+[22]: https://github.com/chrisjackson-pellicle/paralogy_resolution_tutorial/wiki/Additional-pipeline-features-and-details#managing-computing-resources "Link to managing-computing-resources Wiki section"
