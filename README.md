@@ -1,11 +1,11 @@
 # HybSeq Paralogy Resolution Tutorial
 
-##Original orthology inference manuscript, documentation and scripts
+## Original orthology inference manuscript, documentation and scripts
 
 This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the bioRxiv manuscript [here][11]. The original documentation and scripts can be found [here][12].
 
 
-##Yang_and_Smith-RBGV: containerised and pipelined using Singularity and Nextflow
+## Yang_and_Smith-RBGV: containerised and pipelined using Singularity and Nextflow
 
 To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container containing the Linux distribution Ubuntu 18.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well additonal new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [mafft][5], [BioPython][15], [HMMCleaner][2], [trimal][1]). The container is called `yang_and_smith.sif`.
 
