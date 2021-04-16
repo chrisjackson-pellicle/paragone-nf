@@ -84,8 +84,8 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
                                                  
 ...OR      
 
-    --external_outgroups_file <file>                File containing fasta sequences of outgroup sequences for each
-                                                      gene
+    --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
+                                                 gene
 
 ***Tutorial step 3:***
 
