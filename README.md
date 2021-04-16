@@ -34,7 +34,7 @@ Some of the paralogy resolution methods used in this pipeline require an outgrou
 1) Designating one or more taxa in your HybPiper paralog files as outgroups, via the `--internal_outgroups <taxon1,taxon2,taxon3...>` option. For example, if your paralog `fasta` files contain sequences from the taxa `79686` and `79689`, you could designate these sequences as outgroups via `--internal_outgroups 79686,79689`. 
 
 
-2) Providing a fasta file (e.g. `outgroups.fasta`) containing 'external' outgroup sequences with the same fasta header formatting as your HybPiper target file via the option `--external_outgroups_file outgroups.fasta`. For example, if you have used the Angiosperms353 target file for you HybPiper analysis, and you wish to use sequences from *Sesame* as your outgroup, your `outgroups.fasta` file might contain the following:
+2) Providing a fasta file (e.g. `outgroups.fasta`) containing 'external' outgroup sequences via the option `--external_outgroups_file outgroups.fasta`. The sequences in the file should have the same fasta header formatting and gene names as your HybPiper target file. For example, if you have used the Angiosperms353 target file for you HybPiper analysis, and you wish to use sequences from *Sesame* as your outgroup, your `outgroups.fasta` file might contain the following:
 
        >sesame-6995
        gtgggatatgaacaaaatccattgagcttgtattactgtta...
@@ -47,7 +47,7 @@ Some of the paralogy resolution methods used in this pipeline require an outgrou
     
 Again, note that the gene identifier following the dash in the fasta headers (e.g. '6995' for header '>sesame-6995') needs to correspond to a gene identifier in your target file. 
 
-It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you can optionally provide one or more taxon names using the parameter `--external_outgroups <taxon1,taxon2,taxon3...>`, e.g. `--outgroups sesame`, and only these taxa will be included as outgroups. If this option isn't provided all taxa/sequences in the `outgroups.fasta` file will be used. You can provide more than one outgroup taxon name using an comma-separated list, e.g. `--external_outgroups sesame,taxon2,taxon3` etc.
+It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you can optionally provide one or more taxon names using the parameter `--external_outgroups <taxon1,taxon2,taxon3...>`, e.g. `--outgroups sesame`, and only these taxa will be included as outgroups. If this option isn't provided, all taxa/sequences in the `outgroups.fasta` file will be used. You can provide more than one outgroup taxon name using a comma-separated list, e.g. `--external_outgroups sesame,taxon2,taxon3` etc.
 
 **NOTE:** at a minimum, you must provide either 'internal' ingroups via the `--internal_outgroups <taxon1,taxon2,taxon3...>` option, or a file of 'external' outgroup sequences via the `--external_outgroups_file outgroups.fasta` option.
 
