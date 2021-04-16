@@ -161,8 +161,7 @@ process align_paralogs_01 {
 
   if (!params.no_supercontigs) {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py 
-  python /Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py  \
    ${paralog_folder} \
   -external_outgroups_file ${external_outgroups_file} \
   ${external_outgroups_string} \
@@ -172,8 +171,7 @@ process align_paralogs_01 {
   """
   } else if (params.no_supercontigs) {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py 
-  python /Yang-and-Smith-RBGV-scripts//01_check_outgroups_align_and_hmmclean.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py \
   ${paralog_folder} \
   -external_outgroups_file ${external_outgroups_file} \
   ${external_outgroups_string} \
@@ -206,8 +204,7 @@ process alignment_to_tree_03 {
 
   script:
   """ 
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/03_alignment_to_tree.py
-  python /Yang-and-Smith-RBGV-scripts/03_alignment_to_tree.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/03_alignment_to_tree.py \
   ${alignments_folder} \
   -threads_pool ${params.pool} \
   -threads_iqtree ${params.threads}
@@ -231,8 +228,7 @@ process trim_tips_04 {
 
   script:
   """  
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/04_trim_tips.py
-  python /Yang-and-Smith-RBGV-scripts/04_trim_tips.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/04_trim_tips.py \
   ${trees_folder} \
   .treefile \
   ${params.process_04_trim_tips_relative_cutoff} \
@@ -261,8 +257,7 @@ process mask_tips_05 {
 
   script:
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/05_mask_tips_by_taxonID_transcripts.py
-  python /Yang-and-Smith-RBGV-scripts/05_mask_tips_by_taxonID_transcripts.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/05_mask_tips_by_taxonID_transcripts.py \
   ${trimmed_tips_folder} \
   ${alignments_folder} \
   y \
@@ -289,8 +284,7 @@ process cut_long_internal_branches_06 {
   script:
   """
   mkdir 06_cut_internal_branches
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/06_cut_long_internal_branches.py
-  python /Yang-and-Smith-RBGV-scripts/06_cut_long_internal_branches.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/06_cut_long_internal_branches.py \
   ${masked_tips_folder} \
   .mm \
   ${params.process_06_branch_length_cutoff} \
@@ -319,8 +313,7 @@ process write_alignment_subset_07 {
   script:
   """
   mkdir 07_selected_alignments
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py
-  python /Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
   ${cut_internal_branches_folder} \
   .subtree \
   ${alignment_folder} \
@@ -335,7 +328,7 @@ process write_alignment_subset_07 {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 process realign_and_iqtree_08 {
-  //  echo  true
+   echo  true
    label 'in_container'
    publishDir "${params.outdir}", mode: 'copy'
 
@@ -371,8 +364,7 @@ process realign_and_iqtree_08 {
 
    if (!params.no_supercontigs) {
    """
-   # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py
-   python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
+   python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
    ${hmm_cleaned_alignments} \
    ${selected_alignments_ch} \
    -external_outgroups_file ${external_outgroups_file} \
@@ -383,8 +375,7 @@ process realign_and_iqtree_08 {
    """
    } else {
    """
-   # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py
-   python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
+   python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
    ${hmm_cleaned_alignments} \
    ${selected_alignments_ch} \
    -external_outgroups_file ${external_outgroups_file} \
@@ -417,8 +408,7 @@ process prune_paralogs_MO_09 {
   script:
   """
   mkdir 11_prune_MO_trees
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py
-  python /Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
   ${realigned_trees_folder} \
   .treefile \
   ${params.process_09_prune_paralog_MO_minimum_taxa} \
@@ -447,8 +437,7 @@ process prune_paralogs_RT_10 {
   script:
   """
   mkdir 12_prune_RT_trees
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py
-  python /Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
   ${realigned_trees_folder} \
   .treefile 12_prune_RT_trees \
   ${params.process_10_prune_paralogs_RT_minimum_ingroup_taxa} \
@@ -476,8 +465,7 @@ process prune_paralogs_MI_11 {
   script:
   """
   mkdir 13_prune_MI_trees
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py
-  python /Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
   ${realigned_trees_folder} \
   .treefile \
   ${params.process_11_prune_paralogs_MI_relative_tip_cutoff} \
@@ -507,8 +495,7 @@ process write_alignment_subset_MO_12 {
   script:
   """
   mkdir 14_selected_alignments_MO
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py
-  python /Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
   ${MO_folder} \
   .tre \
   ${alignment_folder} \
@@ -537,8 +524,7 @@ process write_alignment_subset_RT_13 {
   script:
   """
   mkdir 15_selected_alignments_RT
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py
-  python /Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
   ${RT_folder} \
   .tre \
   ${alignment_folder} \
@@ -567,8 +553,7 @@ process write_alignment_subset_MI_14 {
   script:
   """
   mkdir 16_selected_alignments_MI
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py
-  python /Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/07_subset_fasta_from_tree.py \
   ${MI_folder} \
   .tre \
   ${alignment_folder} \
@@ -586,7 +571,7 @@ process strip_names_and_realign_MO_15 {
   // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy', pattern: '16_alignments_stripped_names', saveAs: { "17_alignments_stripped_names_MO"}
-  publishDir "${params.outdir}", mode: 'copy', pattern: '18_alignments_stripped_names_realigned', saveAs: { "17_alignments_stripped_names_MO_realigned"}
+  publishDir "${params.outdir}", mode: 'copy', pattern: '17_alignments_stripped_names_realigned', saveAs: { "18_alignments_stripped_names_MO_realigned"}
 
   input:
   file(selected_alignments_MO) from selected_alignments_MO_ch
@@ -598,16 +583,14 @@ process strip_names_and_realign_MO_15 {
   script:
   if (!params.no_supercontigs) {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_MO} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} 
   """
   } else {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_MO} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
@@ -637,16 +620,14 @@ process strip_names_and_realign_RT_16 {
   script:
   if (!params.no_supercontigs) {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_RT} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} 
   """
   } else {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_RT} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} -no_supercontigs
@@ -675,16 +656,14 @@ process strip_names_and_realign_MI_17 {
   script:
   if (!params.no_supercontigs) {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_MI} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} 
   """
   } else {
   """
-  # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py
-  python /Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
+  python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/12_strip_names_and_mafft.py \
   ${selected_alignments_MI} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
