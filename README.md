@@ -187,7 +187,7 @@ Optional arguments:
                                                       Default is 2
 
 
-Please see the Wiki entry [Additional pipeline features and details][32] for further explanation of the parameters above, and general pipeline functionality.
+Please see the Wiki entry [Additional pipeline features and details][22] for further explanation of the parameters above, and general pipeline functionality.
 
 
 ### General notes
