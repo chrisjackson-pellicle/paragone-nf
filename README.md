@@ -29,20 +29,27 @@ See the HybPiper-RBGV wiki entry [Output folders and files][7] for a full descri
 
 ### Outgroup sequences
 
-Some of the paralogy resolution methods used in this pipeline require an outgroup sequence for each of your genes. These outgroup sequences can be provided in a fasta file (e.g. `outgroups.fasta`), with the same fasta header formatting as your HybPiper target file. For example, if you have used the Angiosperms353 target file, and you wish to use sequences from Sesame as your outgroup, your `outgroups.fasta` file might contain the following:
+Some of the paralogy resolution methods used in this pipeline require an outgroup sequence for each of your genes. These outgroup sequences can be provided in two ways.
 
-    >sesame-6995
-    gtgggatatgaacaaaatccattgagcttgtattactgtta...
-    >sesame-4757
-    ctggtgcgtcgagcacttctcttgagcagcaacaatggcgg...
-    >sesame-6933
-    gaagtagatgctgtggtggtggaagcattcgacatatgcac...
+1) Designating one or more taxa in your HybPiper paralog files as outgroups, via the `--internal_outgroups <taxon1,taxon2,taxon3...>` option. For example, if your paralog `fasta` files contain sequences from the taxa `79686` and `79689`, you could designate these sequences as outgroups via `--internal_outgroups 79686,79689`. 
+
+
+2) Providing a fasta file (e.g. `outgroups.fasta`) containing 'external' outgroup sequences via the option `--external_outgroups_file outgroups.fasta`. The sequences in the file should have the same fasta header formatting and gene names as your HybPiper target file. For example, if you have used the Angiosperms353 target file for you HybPiper analysis, and you wish to use sequences from *Sesame* as your outgroup, your `outgroups.fasta` file might contain the following:
+
+       >sesame-6995
+       gtgggatatgaacaaaatccattgagcttgtattactgtta...
+       >sesame-4757
+       ctggtgcgtcgagcacttctcttgagcagcaacaatggcgg...
+       >sesame-6933
+       gaagtagatgctgtggtggtggaagcattcgacatatgcac...
     
-    ...etc
+       ...etc
     
 Again, note that the gene identifier following the dash in the fasta headers (e.g. '6995' for header '>sesame-6995') needs to correspond to a gene identifier in your target file. 
 
-It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you'll provide one or more taxon names using the parameter `--outgroups <taxon_name>`, e.g. `--outgroups sesame`, and only these taxa will be included as outgroups. You can provide more than one outgroup taxon name using an comma-separated list, e.g. `--outgroups sesame,taxon2,taxon3` etc.
+It's fine if your `outgroups.fasta` file contains additional sequences. When running the pipeline (see below) you can optionally provide one or more taxon names using the parameter `--external_outgroups <taxon1,taxon2,taxon3...>`, e.g. `--outgroups sesame`, and only these taxa will be included as outgroups. If this option isn't provided, all taxa/sequences in the `outgroups.fasta` file will be used. You can provide more than one outgroup taxon name using a comma-separated list, e.g. `--external_outgroups sesame,taxon2,taxon3` etc.
+
+**NOTE:** at a minimum, you must provide either 'internal' ingroups via the `--internal_outgroups <taxon1,taxon2,taxon3...>` option, or a file of 'external' outgroup sequences via the `--external_outgroups_file outgroups.fasta` option.
 
 ***Tutorial step 2:***
 
@@ -68,23 +75,32 @@ Please see the Wiki entry [Running on a PC][18]. #CJJ to update for yang and smi
 See section [Pipeline parameters and options](#pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
     --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
-    --outgroups_file <file>                      File containing fasta sequences of target genes
-    --outgroups <taxon1,taxon2,taxon3...>        A comma-separated list of outgroup taxa to add, in order of 
-                                                 preference
+
+...and either
+    
+    --internal_outgroups <taxon1,taxon2,taxon3...>
+                                                 A comma-separated list of taxa present in the paralog fasta files
+                                                 to use as outgroups. Default is none
+                                                 
+...or      
+
+    --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
+                                                 gene
 
 ***Tutorial step 3:***
 
     Run the pipeline using the command:
     
-    nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --outgroups_file outgroups.fasta --outgroups sesame
+    nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --external_outgroups_file outgroups.fasta --outgroups sesame --internal_outgroups taxon1,taxon2,taxon3>
+
 
 ## Output folders and files
 
 After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outdir <name>` parameter. This will consist of 23 subfolders. If you're just after the aligned .fasta files for each of your target genes as output by each of the paralogy resolution methods, the three main output folders of interest are probably:
 
-- `19_alignments_stripped_names_MO_realigned`
-- `21_alignments_stripped_names_RT_realigned`
-- `23_alignments_stripped_names_MI_realigned`
+- `18_alignments_stripped_names_MO_realigned`
+- `20_alignments_stripped_names_RT_realigned`
+- `22_alignments_stripped_names_MI_realigned`
 
 
 For a full explanation of output folders and files, please see the Wiki entry [Output folders and files][20].
@@ -118,40 +134,60 @@ Please see the Wiki entry [Issues][].
 
 ## Pipeline parameters and options
 
+ 
 Mandatory arguments:
 
-      --hybpiper_paralogs_directory <directory>       Path to folder containing HybPiper paralog fasta files.
-      --outgroups_file <file>                         File containing fasta sequences of outgroup sequences for each gene.
-      --outgroups <taxon1,taxon2,taxon3...>           A comma-separated list of outgroup taxa to add, in order of 
-                                                      preference.  
-Optional arguments:
+      --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files.
 
+
+Optional arguments:
+    
+      --internal_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of taxa present in the paralog fasta files
+                                                      to use as outgroups. Default is none
+      --external_outgroups_file <file>                File containing fasta sequences of outgroup sequences for each
+                                                      gene
+      --external_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of outgroup taxa to add from the
+                                                      outgroups_file. Default is all
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
                                                       Available: standard (default), slurm
-      --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in e.g. alignments and tree-building steps. 
-                                                      Default is 1, so e.g. one alignment will be run at a time during alignment steps.
-      --threads <int>                                 Number of threads per multiprocessing pool instance. Used for programs that support multi-threading (e.g. mafft,
-                                                      IQTree). Default is 1.
-      --no_supercontigs                               Use this flag if you are processing paralogs from a run of HybPiper that used the --nosupercontigs flag. Mafft alignments with re-aligned using clustal omega, which can do a better job in these cases. Default is off.
-      --process_02_trim_bad_ends_cutoff <int>         Number of bases either side of an internal gap that much match the reference before trimming stops.Default is 5.
-      --process_02_trim_bad_ends_size <int>           Number of continuous internal gap positions for an internal gap to be investigated. Default is 15.
-      --skip_process_02_trim_bad_ends                 Skips the step trimming the ends of internal gaps.
-      --process_04_trim_tips_relative_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch length for the maximum imbalance between sister tips allowed. Default is 0.2.
-      --process_04_trim_tips_absolute_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch length for the maximum allowed tip branch length. Default is 0.4.
-      --process_06_branch_length_cutoff <float>       When pruning long internal branches (putative deep paralogs) during the tree QC stage, provide a branch length for the maximum allowed internal branch length. Default is 0.3.
-      --process_06_minimum_taxa <int>                 After the final tree-pruning step prior to paralogy resolution, only retain trees with a minimum number of taxa remaining. Default is 3. 
+      --output_dir                                    Specify the name of the main output results folder.
+                                                      Default is 'results'
+      --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in
+                                                      e.g. alignments and tree-building steps. Default is 1, so
+                                                      e.g. one alignment will be run at a time during alignment steps.
+      --threads <int>                                 Number of threads per multiprocessing pool instance. Used for
+                                                      programs that support multi-threading (e.g. mafft, IQTree).
+                                                      Default is 1
+      --no_supercontigs                               Use this flag if you are processing paralogs from a run of
+                                                      HybPiper that used the --nosupercontigs flag. Mafft alignments
+                                                      are re-aligned using clustal omega, which can do a better job in
+                                                      these cases. Default is off
+      --process_04_trim_tips_relative_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch
+                                                      length for the maximum imbalance between sister tips allowed.
+                                                      Default is 0.2
+      --process_04_trim_tips_absolute_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch
+                                                      length for the maximum allowed tip branch length. Default is 0.4.
+      --process_06_branch_length_cutoff <float>       When pruning long internal branches (putative deep paralogs)
+                                                      during the tree QC stage, provide a branch length for the maximum
+                                                      allowed internal branch length. Default is 0.3
+      --process_06_minimum_taxa <int>                 After the final tree-pruning step prior to paralogy resolution,
+                                                      only retain trees with a minimum number of taxa remaining.
+                                                      Default is 3
       --process_09_prune_paralog_MO_minimum_taxa <int>
-                                                      For the MO method, only process trees with a minimum number of taxa. Default is 2.
+                                                      For the MO method, only process trees with a minimum number of
+                                                      taxa. Default is 2
       --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
-                                                      For the RT method, only process trees with a minumum number of ingroup taxa. Default is 2. 
+                                                      For the RT method, only process trees with a minumum number of
+                                                      ingroup taxa. Default is 2
       --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
-                                                      Default is 0.2.
+                                                      Default is 0.2
       --process_11_prune_paralogs_MI_absolute_tip_cutoff <float>
-                                                      Default is 0.4.
-      --process_11_prune_paralogs_MI_minimum_taxa <int>   
-                                                      Default is 2.
+                                                      Default is 0.4
+      --process_11_prune_paralogs_MI_minimum_taxa <int>    
+                                                      Default is 2
 
-Please see the Wiki entry [Additional pipeline features and details][32] for further explanation of the parameters above, and general pipeline functionality.
+
+Please see the Wiki entry [Additional pipeline features and details][22] for further explanation of the parameters above, and general pipeline functionality.
 
 
 ### General notes
