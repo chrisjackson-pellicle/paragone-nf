@@ -119,7 +119,7 @@ params.each { entry ->
 
 // External outgroup sequences file:
 Channel
-  .fromPath("${params.external_outgroups_file}", checkIfExists: true)
+  .fromPath("${params.external_outgroups_file}")
   .first()
   .set { outgroups_file_ch }
 
