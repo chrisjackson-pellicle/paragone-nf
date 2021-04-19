@@ -23,7 +23,17 @@ def helpMessage() {
 
       ################################################################################################################
 
-      --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files.
+      --hybpiper_paralogs_directory <directory>       Path to folder containing HybPiper paralog fasta files.
+
+      ..and either
+
+      --internal_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of taxa present in the paralog fasta files
+                                                      to use as outgroups. Default is none
+
+      ...or
+
+      --external_outgroups_file <file>                File containing fasta sequences of outgroup sequences for each
+                                                      gene
 
       ################################################################################################################
 
@@ -141,14 +151,25 @@ process align_paralogs_01 {
                                          alignments_hmmcleaned_ch_4)
 
   script:
-  external_outgroups_list = params.external_outgroups?.tokenize(',')
-  external_outgroups_string = ''
+  if (params.external_outgroups) {
+    external_outgroups_list = params.external_outgroups?.tokenize(',')
+    external_outgroups_string = ''
 
-  for (outgroup in external_outgroups_list) {
-    external_outgroup_string = "-external_outgroup ${outgroup} "
-    external_outgroups_string = external_outgroups_string + external_outgroup_string
+    for (outgroup in external_outgroups_list) {
+       external_outgroup_string = "-external_outgroup ${outgroup} "
+       external_outgroups_string = external_outgroups_string + external_outgroup_string
+    }
   }
-  // println(external_outgroups_string)
+
+
+  // external_outgroups_list = params.external_outgroups?.tokenize(',')
+  // external_outgroups_string = ''
+
+  // for (outgroup in external_outgroups_list) {
+  //   external_outgroup_string = "-external_outgroup ${outgroup} "
+  //   external_outgroups_string = external_outgroups_string + external_outgroup_string
+  // }
+  // // println(external_outgroups_string)
 
   internal_outgroups_list = params.internal_outgroups?.tokenize(',')
   internal_outgroups_string = ''
@@ -351,14 +372,24 @@ process realign_and_iqtree_08 {
    file("in_and_outgroups_list.txt") into (in_out_list_ch_1, in_out_list_ch_2, in_out_list_ch_3)
 
    script:
-   external_outgroups_list = params.external_outgroups?.tokenize(',')
-   external_outgroups_string = ''
+   if (params.external_outgroups) {
+    external_outgroups_list = params.external_outgroups?.tokenize(',')
+    external_outgroups_string = ''
+
+    for (outgroup in external_outgroups_list) {
+       external_outgroup_string = "-external_outgroup ${outgroup} "
+       external_outgroups_string = external_outgroups_string + external_outgroup_string
+    }
+  }
+
+  //  external_outgroups_list = params.external_outgroups?.tokenize(',')
+  //  external_outgroups_string = ''
  
-   for (outgroup in external_outgroups_list) {
-     external_outgroup_string = "-external_outgroup ${outgroup} "
-     external_outgroups_string = external_outgroups_string + external_outgroup_string
-   }
-  //  println(external_outgroups_string)
+  //  for (outgroup in external_outgroups_list) {
+  //    external_outgroup_string = "-external_outgroup ${outgroup} "
+  //    external_outgroups_string = external_outgroups_string + external_outgroup_string
+  //  }
+  // //  println(external_outgroups_string)
  
    internal_outgroups_list = params.internal_outgroups?.tokenize(',')
    internal_outgroups_string = ''
