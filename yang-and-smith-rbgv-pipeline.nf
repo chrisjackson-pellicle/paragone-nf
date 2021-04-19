@@ -151,6 +151,13 @@ process align_paralogs_01 {
                                          alignments_hmmcleaned_ch_4)
 
   script:
+  if (params.external_outgroups_file) {
+    external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
+  } else {
+    external_outgroups_file_string = ''
+  }
+
+
   if (params.external_outgroups) {
     external_outgroups_list = params.external_outgroups?.tokenize(',')
     external_outgroups_string = ''
@@ -162,16 +169,6 @@ process align_paralogs_01 {
   } else {
     external_outgroups_string = ''
   }
-
-
-  // external_outgroups_list = params.external_outgroups?.tokenize(',')
-  // external_outgroups_string = ''
-
-  // for (outgroup in external_outgroups_list) {
-  //   external_outgroup_string = "-external_outgroup ${outgroup} "
-  //   external_outgroups_string = external_outgroups_string + external_outgroup_string
-  // }
-  // // println(external_outgroups_string)
 
   if (params.internal_outgroups) {
     internal_outgroups_list = params.internal_outgroups?.tokenize(',')
@@ -185,21 +182,12 @@ process align_paralogs_01 {
     internal_outgroups_string = ''
   }
 
-  // internal_outgroups_list = params.internal_outgroups?.tokenize(',')
-  // internal_outgroups_string = ''
-
-  // for (outgroup in internal_outgroups_list) {
-  //   internal_outgroup_string = "-internal_outgroup ${outgroup} "
-  //   internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
-  // }
-  // // println(internal_outgroups_string)
-
   if (!params.no_supercontigs) {
   """
   # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py 
   python /Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py \
    ${paralog_folder} \
-  -external_outgroups_file ${external_outgroups_file} \
+  ${external_outgroups_file_string} \
   ${external_outgroups_string} \
   ${internal_outgroups_string} \
   -pool ${params.pool} \
@@ -210,7 +198,7 @@ process align_paralogs_01 {
   # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py 
   python /Yang-and-Smith-RBGV-scripts//01_check_outgroups_align_and_hmmclean.py \
   ${paralog_folder} \
-  -external_outgroups_file ${external_outgroups_file} \
+  ${external_outgroups_file_string} \
   ${external_outgroups_string} \
   ${internal_outgroups_string} \
   -pool ${params.pool} \
@@ -386,6 +374,12 @@ process realign_and_iqtree_08 {
    file("in_and_outgroups_list.txt") into (in_out_list_ch_1, in_out_list_ch_2, in_out_list_ch_3)
 
    script:
+   if (params.external_outgroups_file) {
+    external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
+  } else {
+    external_outgroups_file_string = ''
+  }
+
    if (params.external_outgroups) {
     external_outgroups_list = params.external_outgroups?.tokenize(',')
     external_outgroups_string = ''
@@ -397,16 +391,6 @@ process realign_and_iqtree_08 {
   } else {
     external_outgroups_string = ''
   }
-
-  //  external_outgroups_list = params.external_outgroups?.tokenize(',')
-  //  external_outgroups_string = ''
- 
-  //  for (outgroup in external_outgroups_list) {
-  //    external_outgroup_string = "-external_outgroup ${outgroup} "
-  //    external_outgroups_string = external_outgroups_string + external_outgroup_string
-  //  }
-  // //  println(external_outgroups_string)
-
 
     if (params.internal_outgroups) {
     internal_outgroups_list = params.internal_outgroups?.tokenize(',')
@@ -420,22 +404,13 @@ process realign_and_iqtree_08 {
     internal_outgroups_string = ''
   }
  
-  //  internal_outgroups_list = params.internal_outgroups?.tokenize(',')
-  //  internal_outgroups_string = ''
- 
-  //  for (outgroup in internal_outgroups_list) {
-  //    internal_outgroup_string = "-internal_outgroup ${outgroup} "
-  //    internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
-  //  }
-  // //  println(internal_outgroups_string)
-
    if (!params.no_supercontigs) {
    """
    # python /Users/chrisjackson/PycharmProjects/Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py
    python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
    ${hmm_cleaned_alignments} \
    ${selected_alignments_ch} \
-   -external_outgroups_file ${external_outgroups_file} \
+   ${external_outgroups_file_string} \
    ${external_outgroups_string} \
    ${internal_outgroups_string} \
    -threads_pool ${params.pool} \
@@ -447,7 +422,7 @@ process realign_and_iqtree_08 {
    python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
    ${hmm_cleaned_alignments} \
    ${selected_alignments_ch} \
-   -external_outgroups_file ${external_outgroups_file} \
+   ${external_outgroups_file_string} \
    ${external_outgroups_string} \
    ${internal_outgroups_string} \
    -threads_pool ${params.pool} \
