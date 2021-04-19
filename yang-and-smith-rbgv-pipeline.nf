@@ -173,14 +173,26 @@ process align_paralogs_01 {
   // }
   // // println(external_outgroups_string)
 
-  internal_outgroups_list = params.internal_outgroups?.tokenize(',')
-  internal_outgroups_string = ''
+  if (params.internal_outgroups) {
+    internal_outgroups_list = params.internal_outgroups?.tokenize(',')
+    internal_outgroups_string = ''
 
-  for (outgroup in internal_outgroups_list) {
-    internal_outgroup_string = "-internal_outgroup ${outgroup} "
-    internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
+    for (outgroup in internal_outgroups_list) {
+      internal_outgroup_string = "-internal_outgroup ${outgroup} "
+      internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
+    }
+  } else {
+    internal_outgroups_string = ''
   }
-  // println(internal_outgroups_string)
+
+  // internal_outgroups_list = params.internal_outgroups?.tokenize(',')
+  // internal_outgroups_string = ''
+
+  // for (outgroup in internal_outgroups_list) {
+  //   internal_outgroup_string = "-internal_outgroup ${outgroup} "
+  //   internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
+  // }
+  // // println(internal_outgroups_string)
 
   if (!params.no_supercontigs) {
   """
@@ -394,15 +406,28 @@ process realign_and_iqtree_08 {
   //    external_outgroups_string = external_outgroups_string + external_outgroup_string
   //  }
   // //  println(external_outgroups_string)
+
+
+    if (params.internal_outgroups) {
+    internal_outgroups_list = params.internal_outgroups?.tokenize(',')
+    internal_outgroups_string = ''
+
+    for (outgroup in internal_outgroups_list) {
+      internal_outgroup_string = "-internal_outgroup ${outgroup} "
+      internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
+    }
+  } else {
+    internal_outgroups_string = ''
+  }
  
-   internal_outgroups_list = params.internal_outgroups?.tokenize(',')
-   internal_outgroups_string = ''
+  //  internal_outgroups_list = params.internal_outgroups?.tokenize(',')
+  //  internal_outgroups_string = ''
  
-   for (outgroup in internal_outgroups_list) {
-     internal_outgroup_string = "-internal_outgroup ${outgroup} "
-     internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
-   }
-  //  println(internal_outgroups_string)
+  //  for (outgroup in internal_outgroups_list) {
+  //    internal_outgroup_string = "-internal_outgroup ${outgroup} "
+  //    internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
+  //  }
+  // //  println(internal_outgroups_string)
 
    if (!params.no_supercontigs) {
    """
