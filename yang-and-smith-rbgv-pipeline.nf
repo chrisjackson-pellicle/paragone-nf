@@ -586,7 +586,7 @@ process strip_names_and_realign_MO_15 {
   // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy', pattern: '16_alignments_stripped_names', saveAs: { "17_alignments_stripped_names_MO"}
-  publishDir "${params.outdir}", mode: 'copy', pattern: '18_alignments_stripped_names_realigned', saveAs: { "17_alignments_stripped_names_MO_realigned"}
+  publishDir "${params.outdir}", mode: 'copy', pattern: '17_alignments_stripped_names_realigned', saveAs: { "18_alignments_stripped_names_MO_realigned"}
 
   input:
   file(selected_alignments_MO) from selected_alignments_MO_ch
