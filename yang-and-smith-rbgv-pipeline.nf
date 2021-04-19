@@ -159,6 +159,8 @@ process align_paralogs_01 {
        external_outgroup_string = "-external_outgroup ${outgroup} "
        external_outgroups_string = external_outgroups_string + external_outgroup_string
     }
+  } else {
+    external_outgroups_string = ''
   }
 
 
@@ -380,6 +382,8 @@ process realign_and_iqtree_08 {
        external_outgroup_string = "-external_outgroup ${outgroup} "
        external_outgroups_string = external_outgroups_string + external_outgroup_string
     }
+  } else {
+    external_outgroups_string = ''
   }
 
   //  external_outgroups_list = params.external_outgroups?.tokenize(',')
