@@ -76,13 +76,13 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
 
     --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
 
-...and
+...and either
     
     --internal_outgroups <taxon1,taxon2,taxon3...>
                                                  A comma-separated list of taxa present in the paralog fasta files
                                                  to use as outgroups. Default is none
                                                  
-...OR      
+...or      
 
     --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
                                                  gene
