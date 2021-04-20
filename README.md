@@ -82,7 +82,7 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
                                                  A comma-separated list of taxa present in the paralog fasta files
                                                  to use as outgroups. Default is none
                                                  
-...or      
+...and/or      
 
     --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
                                                  gene
