@@ -144,6 +144,7 @@ process align_paralogs_01 {
 
   output:
   stdout outgroup_coverage_ch
+  file("outgroup_coverage_report.tsv")
   file("01_alignments")
   file("02_alignments_hmmcleaned") into (alignments_hmmcleaned_ch_1,
                                          alignments_hmmcleaned_ch_2,
@@ -156,7 +157,6 @@ process align_paralogs_01 {
   } else {
     external_outgroups_file_string = ''
   }
-
 
   if (params.external_outgroups) {
     external_outgroups_list = params.external_outgroups?.tokenize(',')
@@ -208,7 +208,7 @@ process align_paralogs_01 {
   }
 }
 
-// Log outgroup coverage statistics to screen:    
+// Log outgroup coverage statistics to screen and `nextflow.log` file:    
 outgroup_coverage_ch.subscribe { log.info '\n' + "$it" + '\n' }
 
 
