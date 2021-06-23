@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
     # Customize the amount of memory on the VM:
     vb.memory = "5120"
     vb.cpus = "4"
-    vb.name = "hybpiper-vm"
+    vb.name = "hybpiper-yang-and-smith-vm"
   end
   #
   # View the documentation for the provider you are using for more
@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-  
+
     # Re-size disk:
     parted /dev/sda resizepart 1 100%
     pvresize /dev/sda1
