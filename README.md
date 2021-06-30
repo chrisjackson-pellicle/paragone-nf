@@ -1,4 +1,4 @@
-# HybSeq Paralogy Resolution Tutorial
+# HybSeq Paralogy Resolution 
 
 ## Original orthology inference manuscript, documentation and scripts
 
