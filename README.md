@@ -1,11 +1,11 @@
-# HybSeq Paralogy Resolution Tutorial
+# HybSeq Paralogy Resolution 
 
 ## Original orthology inference manuscript, documentation and scripts
 
 This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the bioRxiv manuscript [here][11]. The original documentation and scripts can be found [here][12].
 
 
-## Yang_and_Smith-RBGV: containerised and pipelined using Singularity and Nextflow
+## Yang-and-Smith-RBGV: containerised and pipelined using Singularity and Nextflow
 
 To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container containing the Linux distribution Ubuntu 18.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well additonal new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [mafft][5], [BioPython][15], [HMMCleaner][2], [trimal][1]). The container is called `yang_and_smith.sif`.
 
@@ -23,9 +23,6 @@ If you have used the Nextflow pipeline `hybpiper-rbgv-pipeline.nf` to run HybPip
 
 See the HybPiper-RBGV wiki entry [Output folders and files][7] for a full description of the files in these output folders. Briefly, folder `11_paralogs` contains a fasta file for each gene in your HybPiper target file. Each fasta file contains the 'main' contig selected by HybPiper for each sample. Where HybPiper has detected putative paralog contigs, these sequences are also included; in such cases, the main contig has the fasta header suffix `.main`, whereas putative paralogs have the suffix `.0`, `.1` etc. Folder `12_paralogs_noChimeras` contains the same data, except putative chimeric contigs (see [here][8] for an explanation) have been removed.        
 
-***Tutorial step 1:***
-
-    Copy folder `11_paralogs` into your current working directory (i.e. the directory containing `yang-and-smith-rbgv-pipeline.nf` and `yang-and-smith-rbgv.config`.
 
 ### Outgroup sequences
 
@@ -51,10 +48,6 @@ It's fine if your `outgroups.fasta` file contains additional sequences. When run
 
 **NOTE:** at a minimum, you must provide either 'internal' ingroups via the `--internal_outgroups <taxon1,taxon2,taxon3...>` option, or a file of 'external' outgroup sequences via the `--external_outgroups_file outgroups.fasta` option.
 
-***Tutorial step 2:***
-
-    Copy the fasta file containing outgroup sequences to your current working directory.
-
 
 ## Running the pipeline on Linux
 
@@ -72,6 +65,10 @@ Please see the Wiki entry [Running on a PC][18]. #CJJ to update for yang and smi
 
 ### Nextflow pipeline options and parameters
 
+Examle run command:
+
+    nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --external_outgroups_file outgroups.fasta --outgroups sesame --internal_outgroups taxon1,taxon2,taxon3>
+
 See section [Pipeline parameters and options](#pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
     --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
@@ -86,12 +83,6 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
 
     --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
                                                  gene
-
-***Tutorial step 3:***
-
-    Run the pipeline using the command:
-    
-    nextflow run yang-and-smith-rbgv-pipeline.nf -c yang-and-smith-rbgv.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --external_outgroups_file outgroups.fasta --outgroups sesame --internal_outgroups taxon1,taxon2,taxon3>
 
 
 ## Output folders and files
