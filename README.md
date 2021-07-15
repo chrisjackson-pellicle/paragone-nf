@@ -141,7 +141,7 @@ Optional arguments:
                                                       outgroups_file. Default is all
       -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
                                                       Available: standard (default), slurm
-      --outdir                                    Specify the name of the main output results folder.
+      --outdir                                        Specify the name of the main output results folder.
                                                       Default is 'results'
       --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in
                                                       e.g. alignments and tree-building steps. Default is 1, so
