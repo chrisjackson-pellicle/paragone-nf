@@ -193,7 +193,7 @@ process ALIGN_PARALOGS_01 {
     path("01_alignments")
     path("02_alignments_hmmcleaned"), emit: alignments_hmmcleaned_ch
     path("outgroup_coverage_report.tsv")
-    path("external_outgroups_sanitised.fasta"), emit: external_outgroups_sanitised_ch optional true
+    path("*_sanitised.fasta"), emit: external_outgroups_sanitised_ch optional true
     
 
   script:
