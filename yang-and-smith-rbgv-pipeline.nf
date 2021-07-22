@@ -248,7 +248,6 @@ process ALIGN_PARALOGS_01 {
     -pool ${params.pool} \
     -threads ${params.threads} \
     """
-  }
 }
 
 
@@ -469,7 +468,6 @@ process REALIGN_AND_IQTREE_07 {
     ${no_supercontigs_string}
     -threads_pool ${params.pool} \
     -threads_mafft ${params.threads}
-
     """
 }
 
