@@ -120,6 +120,11 @@ def helpMessage() {
       --process_11_prune_paralogs_MI_minimum_taxa <int>    
                                   Default is 2
 
+      --iqtree_ufbootstraps       Generate bootstraps for trees using IQ-TREE's 
+                                  ultrafasta bootstrap approximation (UFBoot) 
+                                  via the options "-bb 1000 -bnni". Default is
+                                  no bootstraps
+
 
     """.stripIndent()
 }
@@ -140,7 +145,7 @@ allowed_params = ["internal_outgroups", "external_outgroups_file", "hybpiper_par
 "process_04_trim_tips_absolute_cutoff", "process_06_branch_length_cutoff", "process_06_minimum_taxa",
 "process_09_prune_paralog_MO_minimum_taxa", "process_10_prune_paralogs_RT_minimum_ingroup_taxa",
 "process_11_prune_paralogs_MI_relative_tip_cutoff", "process_11_prune_paralogs_MI_absolute_tip_cutoff",
-"process_11_prune_paralogs_MI_minimum_taxa", "outdir", "help", "no_supercontigs"]
+"process_11_prune_paralogs_MI_minimum_taxa", "outdir", "help", "no_supercontigs", "iqtree_ufbootstraps"]
 
 params.each { entry ->
   if (! allowed_params.contains(entry.key)) {
@@ -268,11 +273,16 @@ process ALIGNMENT_TO_TREE_02 {
     path("03_tree_files")
 
   script:
+    if (params.iqtree_ufbootstraps) {
+      bootstraps_string = "-generate_bootstraps"
+    } else {
+      bootstraps_string = ''
     """ 
     python /Yang-and-Smith-RBGV-scripts/03_alignment_to_tree.py \
     ${alignments_folder} \
     -threads_pool ${params.pool} \
-    -threads_iqtree ${params.threads}
+    -threads_iqtree ${params.threads} \
+    ${bootstraps_string}
     """
 }
 
@@ -411,6 +421,16 @@ process REALIGN_AND_IQTREE_07 {
     path("in_and_outgroups_list.txt"), emit: in_and_outgroups_list_ch
 
   script:
+    if (params.iqtree_ufbootstraps) {
+      bootstraps_string = "-generate_bootstraps"
+    } else {
+      bootstraps_string = ''
+
+    if (params.no_supercontigs) {
+      no_supercontigs_string = "-no_supercontigs"
+    } else {
+      no_supercontigs_string = ''
+
     if (params.external_outgroups_file) {
       external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
     } else {
@@ -440,8 +460,6 @@ process REALIGN_AND_IQTREE_07 {
     } else {
     internal_outgroups_string = ''
     }
- 
-    if (!params.no_supercontigs) {
 
     """
     python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
@@ -450,25 +468,13 @@ process REALIGN_AND_IQTREE_07 {
     ${external_outgroups_file_string} \
     ${external_outgroups_string} \
     ${internal_outgroups_string} \
+    ${bootstraps_string} \
+    ${no_supercontigs_string}
     -threads_pool ${params.pool} \
     -threads_mafft ${params.threads}
 
     """
-    } else {
-
-    """
-    python /Yang-and-Smith-RBGV-scripts/08_mafft_alignment_and_iqtree.py \
-    ${hmm_cleaned_alignments} \
-    ${selected_alignments_ch} \
-    ${external_outgroups_file_string} \
-    ${external_outgroups_string} \
-    ${internal_outgroups_string} \
-    -threads_pool ${params.pool} \
-    -threads_mafft ${params.threads} \
-    -no_supercontigs
-    """
-    }
- }
+}
 
 
 process PRUNE_PARALOGS_MO_08 {
