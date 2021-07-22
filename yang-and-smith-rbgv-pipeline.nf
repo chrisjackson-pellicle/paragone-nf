@@ -20,7 +20,7 @@ def helpMessage() {
     --internal_outgroups <taxon1,taxon2,taxon3...> \
     -profile <profile> \
     -resume
- 
+
     Mandatory arguments:
 
       ############################################################################
@@ -91,7 +91,7 @@ def helpMessage() {
                                   When pruning long tips during the tree QC stage, 
                                   provide a branch length for the maximum allowed 
                                   tip branch length. Default is 0.4.
-     
+
       --process_06_branch_length_cutoff <float>       
                                   When pruning long internal branches (putative 
                                   deep paralogs)during the tree QC stage, provide 
@@ -122,7 +122,7 @@ def helpMessage() {
 
       --iqtree_ufbootstraps       Generate bootstraps for trees using IQ-TREE's 
                                   ultrafasta bootstrap approximation (UFBoot) 
-                                  via the options "-bb 1000 -bnni". Default is
+                                  via the options '-bb 1000 -bnni'. Default is
                                   no bootstraps
 
 
@@ -202,6 +202,12 @@ process ALIGN_PARALOGS_01 {
     
 
   script:
+    if (params.no_supercontigs) {
+      no_supercontigs_string = "-no_supercontigs"
+    } else {
+      no_supercontigs_string = ''
+    }
+
     if (params.external_outgroups_file) {
       external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
     } else {
@@ -213,8 +219,8 @@ process ALIGN_PARALOGS_01 {
       external_outgroups_string = ''
   
       for (outgroup in external_outgroups_list) {
-         external_outgroup_string = "-external_outgroup ${outgroup} "
-         external_outgroups_string = external_outgroups_string + external_outgroup_string
+        external_outgroup_string = "-external_outgroup ${outgroup} "
+        external_outgroups_string = external_outgroups_string + external_outgroup_string
       }
     } else {
       external_outgroups_string = ''
@@ -231,28 +237,17 @@ process ALIGN_PARALOGS_01 {
     } else {
       internal_outgroups_string = ''
     }
-  
-    if (!params.no_supercontigs) {
+
     """
     python /Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py \
     ${paralog_folder} \
     ${external_outgroups_file_string} \
     ${external_outgroups_string} \
     ${internal_outgroups_string} \
+    ${no_supercontigs_string} \
     -pool ${params.pool} \
     -threads ${params.threads} \
     """
-    } else if (params.no_supercontigs) {
-    """
-    python /Yang-and-Smith-RBGV-scripts/01_check_outgroups_align_and_hmmclean.py \
-    ${paralog_folder} \
-    ${external_outgroups_file_string} \
-    ${external_outgroups_string} \
-    ${internal_outgroups_string} \
-    -pool ${params.pool} \
-    -threads ${params.threads} \
-    -no_supercontigs
-  """
   }
 }
 
@@ -425,11 +420,13 @@ process REALIGN_AND_IQTREE_07 {
       bootstraps_string = "-generate_bootstraps"
     } else {
       bootstraps_string = ''
+    }
 
     if (params.no_supercontigs) {
       no_supercontigs_string = "-no_supercontigs"
     } else {
       no_supercontigs_string = ''
+    }
 
     if (params.external_outgroups_file) {
       external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
