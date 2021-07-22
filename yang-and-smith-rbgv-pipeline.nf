@@ -271,6 +271,8 @@ process ALIGNMENT_TO_TREE_02 {
       bootstraps_string = "-generate_bootstraps"
     } else {
       bootstraps_string = ''
+    }
+
     """ 
     python /Yang-and-Smith-RBGV-scripts/03_alignment_to_tree.py \
     ${alignments_folder} \
