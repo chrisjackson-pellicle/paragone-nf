@@ -467,7 +467,7 @@ process REALIGN_AND_IQTREE_07 {
     ${external_outgroups_string} \
     ${internal_outgroups_string} \
     ${bootstraps_string} \
-    ${no_supercontigs_string}
+    ${no_supercontigs_string} \
     -threads_pool ${params.pool} \
     -threads_mafft ${params.threads}
     """
