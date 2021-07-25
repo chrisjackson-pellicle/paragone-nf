@@ -489,6 +489,7 @@ process PRUNE_PARALOGS_MO_08 {
 
   output:
     path("11_prune_MO_trees")
+    path("*skipped_incorrect_names.txt")
 
   script:
     """
@@ -518,6 +519,7 @@ process PRUNE_PARALOGS_RT_09 {
 
   output:
   path("12_prune_RT_trees")
+  path("*skipped_incorrect_names.txt")
 
   script:
   """
