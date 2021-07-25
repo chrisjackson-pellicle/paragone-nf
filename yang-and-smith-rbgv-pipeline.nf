@@ -488,7 +488,7 @@ process PRUNE_PARALOGS_MO_08 {
     path(realigned_trees_folder)
 
   output:
-    path("11_prune_MO_trees")
+    path("11_prune_MO_trees"), emit: MO_folder_ch
     path("*skipped_incorrect_names.txt")
 
   script:
@@ -518,7 +518,7 @@ process PRUNE_PARALOGS_RT_09 {
   path(realigned_trees_folder)
 
   output:
-  path("12_prune_RT_trees")
+  path("12_prune_RT_trees"), emit: RT_folder_ch
   path("*skipped_incorrect_names.txt")
 
   script:
@@ -784,8 +784,8 @@ workflow {
   PRUNE_PARALOGS_RT_09( REALIGN_AND_IQTREE_07.out.in_and_outgroups_list_ch, REALIGN_AND_IQTREE_07.out.realigned_trees_ch )
   PRUNE_PARALOGS_MI_10( REALIGN_AND_IQTREE_07.out.in_and_outgroups_list_ch, REALIGN_AND_IQTREE_07.out.realigned_trees_ch )
   
-  WRITE_ALIGNMENT_SUBSET_MO_11( PRUNE_PARALOGS_MO_08.out, REALIGN_AND_IQTREE_07.out.realigned_fasta_ch )
-  WRITE_ALIGNMENT_SUBSET_RT_12( PRUNE_PARALOGS_RT_09.out, REALIGN_AND_IQTREE_07.out.realigned_fasta_ch )
+  WRITE_ALIGNMENT_SUBSET_MO_11( PRUNE_PARALOGS_MO_08.out.MO_folder_ch, REALIGN_AND_IQTREE_07.out.realigned_fasta_ch )
+  WRITE_ALIGNMENT_SUBSET_RT_12( PRUNE_PARALOGS_RT_09.out.RT_folder_ch, REALIGN_AND_IQTREE_07.out.realigned_fasta_ch )
   WRITE_ALIGNMENT_SUBSET_MI_13( PRUNE_PARALOGS_MI_10.out, REALIGN_AND_IQTREE_07.out.realigned_fasta_ch )
   
   STRIP_NAMES_AND_REALIGN_MO_14( WRITE_ALIGNMENT_SUBSET_MO_11.out )
