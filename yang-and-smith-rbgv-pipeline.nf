@@ -120,7 +120,7 @@ def helpMessage() {
       --process_11_prune_paralogs_MI_minimum_taxa <int>    
                                   Default is 2
 
-      --iqtree_ufbootstraps       Generate bootstraps for trees using IQ-TREE's 
+               Generate bootstraps for trees using IQ-TREE's 
                                   ultrafasta bootstrap approximation (UFBoot) 
                                   via the options '-bb 1000 -bnni'. Default is
                                   no bootstraps
@@ -489,7 +489,7 @@ process PRUNE_PARALOGS_MO_08 {
 
   output:
     path("11_prune_MO_trees"), emit: MO_folder_ch
-    path("*skipped_incorrect_names.txt")
+    path("*skipped_incorrect_names.txt") optional true
 
   script:
     """
@@ -519,7 +519,7 @@ process PRUNE_PARALOGS_RT_09 {
 
   output:
   path("12_prune_RT_trees"), emit: RT_folder_ch
-  path("*skipped_incorrect_names.txt")
+  path("*skipped_incorrect_names.txt") optional true
 
   script:
   """
