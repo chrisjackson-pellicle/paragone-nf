@@ -156,7 +156,7 @@ allowed_params = ["internal_outgroups", "external_outgroups_file", "hybpiper_par
 "process_09_prune_paralog_MO_minimum_taxa", "process_10_prune_paralogs_RT_minimum_ingroup_taxa",
 "process_11_prune_paralogs_MI_relative_tip_cutoff", "process_11_prune_paralogs_MI_absolute_tip_cutoff",
 "process_11_prune_paralogs_MI_minimum_taxa", "outdir", "help", "no_supercontigs", "bootstraps",
-"use_fasttree", "use_muscle", "mafft_algorithm"]
+"use_fasttree", "use_muscle", "mafft_algorithm", "batch_size"]
 
 params.each { entry ->
   if (! allowed_params.contains(entry.key)) {
