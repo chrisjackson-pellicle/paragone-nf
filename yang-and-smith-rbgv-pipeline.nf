@@ -317,7 +317,7 @@ process ALIGNMENT_TO_TREE_03 {
     path("batch_*_alignments_hmmcleaned_tree_files"), emit: batch_treefiles_ch
 
   script:
-    if (params.iqtree_ufbootstraps) {
+    if (params.bootstraps) {
       bootstraps_string = "-generate_bootstraps"
     } else {
       bootstraps_string = ''
