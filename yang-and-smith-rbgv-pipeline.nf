@@ -207,7 +207,7 @@ process CHECK_AND_BATCH_PARALOGS_01 {
     stdout emit: outgroup_coverage_ch
     path("01_batch_folders/batch_*"), emit: batch_folders_ch
     path("outgroup_coverage_report.tsv")
-    path("external_outgroups_sanitised.fasta"), emit: external_outgroups_sanitised_ch optional true
+    path("*sanitised.*"), emit: external_outgroups_sanitised_ch optional true
     
 
   script:
