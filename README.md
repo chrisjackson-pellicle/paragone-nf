@@ -135,6 +135,7 @@ Mandatory arguments:
 
 Optional arguments:
     
+<<<<<<< HEAD
     --internal_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of taxa present in the paralog fasta files
                                                     to use as outgroups. Default is none
 
@@ -210,6 +211,51 @@ Optional arguments:
     --bootstraps                                    Generate bootstraps for trees. For IQ-TREE, uses ultrafast 
                                                     bootstrap approximation (UFBoot) via the options '-bb 1000 -bnni'. 
                                                     For FastTree, uses the SH test. Default is no bootstraps
+=======
+      --internal_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of taxa present in the paralog fasta files
+                                                      to use as outgroups. Default is none
+      --external_outgroups_file <file>                File containing fasta sequences of outgroup sequences for each
+                                                      gene
+      --external_outgroups <taxon1,taxon2,taxon3...>  A comma-separated list of outgroup taxa to add from the
+                                                      outgroups_file. Default is all
+      -profile <profile>                              Configuration profile to use. Can use multiple (comma separated)
+                                                      Available: standard (default), slurm
+      --outdir                                        Specify the name of the main output results folder.
+                                                      Default is 'results'
+      --pool <int>                                    Number of threads for the Python multiprocessing pool. Used in
+                                                      e.g. alignments and tree-building steps. Default is 1, so
+                                                      e.g. one alignment will be run at a time during alignment steps.
+      --threads <int>                                 Number of threads per multiprocessing pool instance. Used for
+                                                      programs that support multi-threading (e.g. mafft, IQTree).
+                                                      Default is 1
+      --no_supercontigs                               Use this flag if you are processing paralogs from a run of
+                                                      HybPiper that used the --nosupercontigs flag. Mafft alignments
+                                                      are re-aligned using clustal omega, which can do a better job in
+                                                      these cases. Default is off
+      --process_04_trim_tips_relative_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch
+                                                      length for the maximum imbalance between sister tips allowed.
+                                                      Default is 0.2
+      --process_04_trim_tips_absolute_cutoff <float>  When pruning long tips during the tree QC stage, provide a branch
+                                                      length for the maximum allowed tip branch length. Default is 0.4.
+      --process_06_branch_length_cutoff <float>       When pruning long internal branches (putative deep paralogs)
+                                                      during the tree QC stage, provide a branch length for the maximum
+                                                      allowed internal branch length. Default is 0.3
+      --process_06_minimum_taxa <int>                 After the final tree-pruning step prior to paralogy resolution,
+                                                      only retain trees with a minimum number of taxa remaining.
+                                                      Default is 3
+      --process_09_prune_paralog_MO_minimum_taxa <int>
+                                                      For the MO method, only process trees with a minimum number of
+                                                      taxa. Default is 2
+      --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
+                                                      For the RT method, only process trees with a minumum number of
+                                                      ingroup taxa. Default is 2
+      --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
+                                                      Default is 0.2
+      --process_11_prune_paralogs_MI_absolute_tip_cutoff <float>
+                                                      Default is 0.4
+      --process_11_prune_paralogs_MI_minimum_taxa <int>    
+                                                      Default is 2
+>>>>>>> e2331870683684bd15929ab4baa29e5cbe93ae9e
 
 
 Please see the Wiki entry [Additional pipeline features and details][22] for further explanation of the parameters above, and general pipeline functionality.
