@@ -55,11 +55,13 @@ Please see the Wiki entry [Running on Linux][19].
 
 ## Running the pipeline on a Mac (macOS)
 
-Please see the Wiki entry [Running on a Mac][17]. #CJJ to update for yang and smith
+Please see the Wiki entry [Running on a Mac][17].
+
+**NOTE:** Macs using the new Apple M1 chip are not yet supported.
 
 ## Running the pipeline on a PC (Windows)
 
-Please see the Wiki entry [Running on a PC][18]. #CJJ to update for yang and smith
+Please see the Wiki entry [Running on a PC][18].
 
 
 
@@ -114,13 +116,13 @@ For details on adapting the pipeline to run on local and HPC computing resources
 
 ## Bug fixes and changes (WIP)
 
-Please see the Wiki entry [Bug fixes and changes][].
+Please see the Wiki entry [Bug fixes and changes][WIP].
 
 
 
 ## Issues still to deal with (WIP)
 
-Please see the Wiki entry [Issues][].
+Please see the Wiki entry [Issues][WIP].
 
 
 ## Pipeline parameters and options
