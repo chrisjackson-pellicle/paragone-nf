@@ -59,7 +59,7 @@ def helpMessage() {
                                   A comma-separated list of outgroup taxa to add 
                                   from the outgroups_file. Default is all
 
-      --batch_size <int>          Number of paralog fasta filea to align/generate 
+      --batch_size <int>          Number of paralog fasta files to align/generate 
                                   trees for in one batch. Default is 20
 
       -profile <profile>          Configuration profile to use. Can use multiple 
@@ -76,7 +76,7 @@ def helpMessage() {
       
       --threads <int>             Number of threads per multiprocessing pool 
                                   instance. Used for programs that support 
-                                  multi-threading (e.g. mafft, IQTree). Default 
+                                  multi-threading (e.g. mafft, IQ-TREE). Default 
                                   is 1
       
       --no_supercontigs           Use this flag if you are processing paralogs 
@@ -101,6 +101,9 @@ def helpMessage() {
 
       --use_muscle                Use MUSCLE to align sequences intead of MAFFT. 
                                   Default is MAFFT
+
+      --use_fasttree              Use FastTreeMP to generate trees instead of 
+                                  IQ-TREE. Default is IQ-TREE
 
       --process_06_branch_length_cutoff <float>       
                                   When pruning long internal branches (putative 
@@ -131,7 +134,7 @@ def helpMessage() {
                                   Default is 2
 
       --bootstraps                Generate bootstraps for trees. For IQ-TREE, uses 
-                                  ultrafasta bootstrap approximation (UFBoot) 
+                                  ultrafast bootstrap approximation (UFBoot) 
                                   via the options '-bb 1000 -bnni'. For FastTree, 
                                   uses the SH test. Default is no bootstraps
 

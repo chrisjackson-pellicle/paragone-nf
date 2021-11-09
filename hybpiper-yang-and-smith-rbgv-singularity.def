@@ -23,7 +23,7 @@ apt-get -y update
 	apt-get -y install perl
 	apt-get -y install cpanminus
 	apt-get -y install unzip
-	apt-get -y install libgl1 # neccesary for ete3, see https://github.com/etetoolkit/ete/issues/195
+	apt-get -y install libgl1 # necessary for ete3, see https://github.com/etetoolkit/ete/issues/195
 
 	locale-gen en_US.UTF-8
 	echo "LANG=en_US.UTF-8" >> /etc/default/locale
