@@ -292,6 +292,7 @@ process ALIGN_AND_HMMCLEAN_02 {
       muscle_string = ''
     }
 
+    if (params.no_supercontigs) {
     """ 
     python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
     ${alignments_folder} \
@@ -299,8 +300,24 @@ process ALIGN_AND_HMMCLEAN_02 {
     ${muscle_string} \
     ${mafft_algorithm_string} \
     -pool ${params.pool} \
-    -threads ${params.threads}\
+    -threads ${params.threads}
+
+    batch=(batch_*_alignments_clustal_hmmcleaned)
+    batch_rename=\${batch/clustal_/}
+    mv \$batch \$batch_rename
     """
+
+    } else {
+    """ 
+    python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
+    ${alignments_folder} \
+    ${no_supercontigs_string} \
+    ${muscle_string} \
+    ${mafft_algorithm_string} \
+    -pool ${params.pool} \
+    -threads ${params.threads}
+    """
+    }
 }
 
 
@@ -551,6 +568,35 @@ process REALIGN_AND_IQTREE_08 {
       mafft_algorithm_string = ''
     }
 
+    if (params.no_supercontigs) {
+    """
+    python /Yang-and-Smith-RBGV-scripts/08a_alignment_and_tree.py \
+    ${hmm_cleaned_alignments} \
+    ${selected_alignments_ch} \
+    ${external_outgroups_file_string} \
+    ${external_outgroups_string} \
+    ${internal_outgroups_string} \
+    ${no_supercontigs_string} \
+    ${muscle_string} \
+    ${mafft_algorithm_string} \
+    ${fasttree_string} \
+    -threads_pool ${params.pool} \
+    -threads_mafft ${params.threads}
+
+    batch_trees=(batch_*_outgroups_added_alignments_clustal_tree_files)
+    batch_trees_rename=\${batch_trees/clustal_/}
+    mv \$batch_trees \$batch_trees_rename
+
+
+    batch_aln=(batch_*_outgroups_added_alignments)
+    batch_aln_clustal=(batch_*_outgroups_added_alignments_clustal)
+    rm -r \$batch_aln
+    mv \$batch_aln_clustal \$batch_aln
+
+
+
+    """
+    } else {
     """
     python /Yang-and-Smith-RBGV-scripts/08a_alignment_and_tree.py \
     ${hmm_cleaned_alignments} \
@@ -565,6 +611,7 @@ process REALIGN_AND_IQTREE_08 {
     -threads_pool ${params.pool} \
     -threads_mafft ${params.threads}
     """
+    }
   }
 
 
@@ -824,6 +871,23 @@ process STRIP_NAMES_AND_REALIGN_MO_15 {
       no_supercontigs_string = ''
     }
 
+  if (params.no_supercontigs) {
+  """
+  echo ${selected_alignments_MO}
+  python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
+  ${selected_alignments_MO} \
+  -threads_pool ${params.pool} \
+  -threads_mafft ${params.threads} \
+  ${no_supercontigs_string} 
+
+
+  batch_aln=(batch_*_stripped_names_alignments)
+  batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
+  rm -r \$batch_aln
+  mv \$batch_aln_clustal \$batch_aln
+  """
+
+  } else {
   """
   echo ${selected_alignments_MO}
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
@@ -832,6 +896,8 @@ process STRIP_NAMES_AND_REALIGN_MO_15 {
   -threads_mafft ${params.threads} \
   ${no_supercontigs_string} 
   """
+
+  }
 }
 
 
@@ -860,6 +926,21 @@ process STRIP_NAMES_AND_REALIGN_RT_16 {
       no_supercontigs_string = ''
     }
 
+  if (params.no_supercontigs) {
+  """
+  python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
+  ${selected_alignments_RT} \
+  -threads_pool ${params.pool} \
+  -threads_mafft ${params.threads} \
+  ${no_supercontigs_string}
+
+  batch_aln=(batch_*_stripped_names_alignments)
+  batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
+  rm -r \$batch_aln
+  mv \$batch_aln_clustal \$batch_aln
+  """
+
+  } else {
   """
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
   ${selected_alignments_RT} \
@@ -867,6 +948,7 @@ process STRIP_NAMES_AND_REALIGN_RT_16 {
   -threads_mafft ${params.threads} \
   ${no_supercontigs_string}
   """
+  }
 }
 
 
@@ -894,6 +976,21 @@ process STRIP_NAMES_AND_REALIGN_MI_17 {
       no_supercontigs_string = ''
     }
 
+  if (params.no_supercontigs) {
+  """
+  python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
+  ${selected_alignments_MI} \
+  -threads_pool ${params.pool} \
+  -threads_mafft ${params.threads} \
+  ${no_supercontigs_string}
+
+  batch_aln=(batch_*_stripped_names_alignments)
+  batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
+  rm -r \$batch_aln
+  mv \$batch_aln_clustal \$batch_aln
+  """
+
+  } else {
   """
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
   ${selected_alignments_MI} \
@@ -901,6 +998,7 @@ process STRIP_NAMES_AND_REALIGN_MI_17 {
   -threads_mafft ${params.threads} \
   ${no_supercontigs_string}
   """
+  }
 }
 
 
