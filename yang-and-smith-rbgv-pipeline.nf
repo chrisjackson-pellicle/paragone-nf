@@ -665,7 +665,7 @@ process PRUNE_PARALOGS_MO_09 {
     mkdir 12_prune_MO_trees
 
     python /Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
-    all_realigned_trees_combined \
+    treefiles_polytomies_resolved \
     .treefile \
     ${params.process_09_prune_paralog_MO_minimum_taxa} \
     12_prune_MO_trees \
@@ -695,7 +695,7 @@ process PRUNE_PARALOGS_RT_10 {
   mkdir 13_prune_RT_trees
 
   python /Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
-  all_realigned_trees_combined \
+  treefiles_polytomies_resolved \
   .treefile 13_prune_RT_trees \
   ${params.process_10_prune_paralogs_RT_minimum_ingroup_taxa} \
   ${in_out_file}
@@ -724,7 +724,7 @@ process PRUNE_PARALOGS_MI_11 {
   mkdir 14_prune_MI_trees
 
   python /Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
-  all_realigned_trees_combined \
+  treefiles_polytomies_resolved \
   .treefile \
   ${params.process_11_prune_paralogs_MI_relative_tip_cutoff} \
   ${params.process_11_prune_paralogs_MI_absolute_tip_cutoff} \
