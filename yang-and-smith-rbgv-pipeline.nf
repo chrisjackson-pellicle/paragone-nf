@@ -615,35 +615,6 @@ process REALIGN_AND_IQTREE_08 {
   }
 
 
-process RESOLVE_POLYTOMIES {
-  /*
-  Run script resolve_polytomies.py
-  */
-
-  label 'in_container'
-  publishDir "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "treefiles_polytomies_resolved"
-  // echo true
-
-    input:
-    path(realigned_trees_folder)
-
-  output:
-    path("treefiles_polytomies_resolved"), emit: trees_resolved_polytomies_ch
-
-  script:
-    """
-    mkdir all_realigned_trees_combined
-    for tree_folder in ${realigned_trees_folder}
-      do
-        echo \${tree_folder}
-        cp -r \${tree_folder}/* all_realigned_trees_combined
-      done
-
-    python /Yang-and-Smith-RBGV-scripts/resolve_polytomies.py all_realigned_trees_combined
-    """
-}
-
-
 process PRUNE_PARALOGS_MO_09 {
   /*
   Run script 09_prune_paralogs_MO.py
@@ -655,17 +626,24 @@ process PRUNE_PARALOGS_MO_09 {
 
   input:
     path(in_out_file)
-    path(realigned_resolved_trees_folder)
+    path(realigned_trees_folder)
 
   output:
     path("12_prune_MO_trees")
 
   script:
     """
+    mkdir all_realigned_trees_combined
+    for tree_folder in ${realigned_trees_folder}
+      do
+        echo \${tree_folder}
+        cp -r \${tree_folder}/* all_realigned_trees_combined
+      done
+
     mkdir 12_prune_MO_trees
 
     python /Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
-    treefiles_polytomies_resolved \
+    all_realigned_trees_combined \
     .treefile \
     ${params.process_09_prune_paralog_MO_minimum_taxa} \
     12_prune_MO_trees \
@@ -685,17 +663,24 @@ process PRUNE_PARALOGS_RT_10 {
 
   input:
   path(in_out_file)
-  path(realigned_resolved_trees_folder)
+  path(realigned_trees_folder)
 
   output:
   path("13_prune_RT_trees")
 
   script:
   """
+  mkdir all_realigned_trees_combined
+    for tree_folder in ${realigned_trees_folder}
+      do
+        echo \${tree_folder}
+        cp -r \${tree_folder}/* all_realigned_trees_combined
+      done
+
   mkdir 13_prune_RT_trees
 
   python /Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
-  treefiles_polytomies_resolved \
+  all_realigned_trees_combined \
   .treefile 13_prune_RT_trees \
   ${params.process_10_prune_paralogs_RT_minimum_ingroup_taxa} \
   ${in_out_file}
@@ -714,17 +699,24 @@ process PRUNE_PARALOGS_MI_11 {
 
   input:
   path(in_out_file)
-  path(realigned_resolved_trees_folder)
+  path(realigned_trees_folder)
 
   output:
   path("14_prune_MI_trees")
 
   script:
   """
+  mkdir all_realigned_trees_combined
+    for tree_folder in ${realigned_trees_folder}
+      do
+        echo \${tree_folder}
+        cp -r \${tree_folder}/* all_realigned_trees_combined
+      done
+
   mkdir 14_prune_MI_trees
 
   python /Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
-  treefiles_polytomies_resolved \
+  all_realigned_trees_combined \
   .treefile \
   ${params.process_11_prune_paralogs_MI_relative_tip_cutoff} \
   ${params.process_11_prune_paralogs_MI_absolute_tip_cutoff} \
@@ -1041,14 +1033,12 @@ workflow {
                              [] )
   }
 
-  RESOLVE_POLYTOMIES( REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
-
   PRUNE_PARALOGS_MO_09( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
+                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
   PRUNE_PARALOGS_RT_10( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
+                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
   PRUNE_PARALOGS_MI_11( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
+                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
   
   WRITE_ALIGNMENT_SUBSET_MO_12( PRUNE_PARALOGS_MO_09.out, 
                                 REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
