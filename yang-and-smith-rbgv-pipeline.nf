@@ -639,7 +639,7 @@ process RESOLVE_POLYTOMIES {
         cp -r \${tree_folder}/* all_realigned_trees_combined
       done
 
-    python resolve_polytomies.py all_realigned_trees_combined
+    python /Yang-and-Smith-RBGV-scripts/resolve_polytomies.py all_realigned_trees_combined
     """
 }
 
@@ -1044,11 +1044,11 @@ workflow {
   RESOLVE_POLYTOMIES( REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
 
   PRUNE_PARALOGS_MO_09( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   PRUNE_PARALOGS_RT_10( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   PRUNE_PARALOGS_MI_11( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   
   WRITE_ALIGNMENT_SUBSET_MO_12( PRUNE_PARALOGS_MO_09.out, 
                                 REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
