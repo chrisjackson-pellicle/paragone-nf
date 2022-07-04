@@ -98,15 +98,6 @@ For a full explanation of output folders and files, please see the Wiki entry [O
 
 
 
-## Post-pipeline analyses
-
-e.g.
-
-- Concatenated IQtree
-- Astral
-
-etc.
-
 ## General information
 
 For details on adapting the pipeline to run on local and HPC computing resources, see [here][22].
