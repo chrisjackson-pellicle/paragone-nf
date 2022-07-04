@@ -620,11 +620,11 @@ process RESOLVE_POLYTOMIES {
   Run script resolve_polytomies.py
   */
 
-  // echo true
   label 'in_container'
-  "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "treefiles_polytomies_resolved"
+  publishDir "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "treefiles_polytomies_resolved"
+  // echo true
 
-  input:
+    input:
     path(realigned_trees_folder)
 
   output:
