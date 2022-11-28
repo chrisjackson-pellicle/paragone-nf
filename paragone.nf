@@ -12,8 +12,8 @@ def helpMessage() {
     Usage:
     The typical command for running the pipeline is as follows:
 
-    nextflow run yang-and-smith-rbgv-pipeline.nf \
-    -c yang-and-smith-rbgv.config \
+    nextflow run paragone.nf \
+    -c paragone.config \
     --hybpiper_paralogs_directory <directory> \
     --external_outgroups_file <file> \
     --external_outgroups <taxon1,taxon2,taxon3...> \
@@ -79,9 +79,9 @@ def helpMessage() {
                                   multi-threading (e.g. mafft, IQ-TREE). Default 
                                   is 1
       
-      --no_supercontigs           Use this flag if you are processing paralogs 
+      --no_stitched_contig        Use this flag if you are processing paralogs 
                                   from a run of HybPiper that used the 
-                                  --nosupercontigs flag. Mafft alignments are 
+                                  --no_stitched_contig flag. Mafft alignments are 
                                   re-aligned using clustal omega, which can do a 
                                   better job in these cases. Default is off
       
@@ -122,7 +122,7 @@ def helpMessage() {
       
       --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
                                   For the RT method, only process trees with a 
-                                  minumum number of ingroup taxa. Default is 2
+                                  minimum number of ingroup taxa. Default is 2
       
       --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
                                   Default is 0.2
@@ -158,7 +158,7 @@ allowed_params = ["internal_outgroups", "external_outgroups_file", "hybpiper_par
 "process_04_trim_tips_absolute_cutoff", "process_06_branch_length_cutoff", "process_06_minimum_taxa",
 "process_09_prune_paralog_MO_minimum_taxa", "process_10_prune_paralogs_RT_minimum_ingroup_taxa",
 "process_11_prune_paralogs_MI_relative_tip_cutoff", "process_11_prune_paralogs_MI_absolute_tip_cutoff",
-"process_11_prune_paralogs_MI_minimum_taxa", "outdir", "help", "no_supercontigs", "bootstraps",
+"process_11_prune_paralogs_MI_minimum_taxa", "outdir", "help", "no_stitched_contig", "bootstraps",
 "use_fasttree", "use_muscle", "mafft_algorithm", "batch_size"]
 
 params.each { entry ->
@@ -274,10 +274,10 @@ process ALIGN_AND_HMMCLEAN_02 {
     path("batch_*_alignments_hmmcleaned"), emit: batch_alignments_hmmcleaned_ch
 
   script:
-    if (params.no_supercontigs) {
-      no_supercontigs_string = "-no_supercontigs"
+    if (params.no_stitched_contig) {
+      no_stitched_contig_string = "-no_stitched_contig"
     } else {
-      no_supercontigs_string = ''
+      no_stitched_contig_string = ''
     }
 
     if (params.mafft_algorithm) {
@@ -292,11 +292,11 @@ process ALIGN_AND_HMMCLEAN_02 {
       muscle_string = ''
     }
 
-    if (params.no_supercontigs) {
+    if (params.no_stitched_contig) {
     """ 
     python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
     ${alignments_folder} \
-    ${no_supercontigs_string} \
+    ${no_stitched_contig_string} \
     ${muscle_string} \
     ${mafft_algorithm_string} \
     -pool ${params.pool} \
@@ -311,7 +311,7 @@ process ALIGN_AND_HMMCLEAN_02 {
     """ 
     python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
     ${alignments_folder} \
-    ${no_supercontigs_string} \
+    ${no_stitched_contig_string} \
     ${muscle_string} \
     ${mafft_algorithm_string} \
     -pool ${params.pool} \
@@ -544,10 +544,10 @@ process REALIGN_AND_IQTREE_08 {
     internal_outgroups_string = ''
     }
 
-    if (params.no_supercontigs) {
-      no_supercontigs_string = "-no_supercontigs"
+    if (params.no_stitched_contig) {
+      no_stitched_contig_string = "-no_stitched_contig"
     } else {
-      no_supercontigs_string = ''
+      no_stitched_contig_string = ''
     }
 
     if (params.use_fasttree) {
@@ -568,7 +568,7 @@ process REALIGN_AND_IQTREE_08 {
       mafft_algorithm_string = ''
     }
 
-    if (params.no_supercontigs) {
+    if (params.no_stitched_contig) {
     """
     python /Yang-and-Smith-RBGV-scripts/08a_alignment_and_tree.py \
     ${hmm_cleaned_alignments} \
@@ -576,7 +576,7 @@ process REALIGN_AND_IQTREE_08 {
     ${external_outgroups_file_string} \
     ${external_outgroups_string} \
     ${internal_outgroups_string} \
-    ${no_supercontigs_string} \
+    ${no_stitched_contig_string} \
     ${muscle_string} \
     ${mafft_algorithm_string} \
     ${fasttree_string} \
@@ -604,7 +604,7 @@ process REALIGN_AND_IQTREE_08 {
     ${external_outgroups_file_string} \
     ${external_outgroups_string} \
     ${internal_outgroups_string} \
-    ${no_supercontigs_string} \
+    ${no_stitched_contig_string} \
     ${muscle_string} \
     ${mafft_algorithm_string} \
     ${fasttree_string} \
@@ -613,6 +613,35 @@ process REALIGN_AND_IQTREE_08 {
     """
     }
   }
+
+
+process RESOLVE_POLYTOMIES {
+  /*
+  Run script resolve_polytomies.py
+  */
+
+  label 'in_container'
+  publishDir "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "treefiles_polytomies_resolved"
+  // echo true
+
+    input:
+    path(realigned_trees_folder)
+
+  output:
+    path("treefiles_polytomies_resolved"), emit: trees_resolved_polytomies_ch
+
+  script:
+    """
+    mkdir all_realigned_trees_combined
+    for tree_folder in ${realigned_trees_folder}
+      do
+        echo \${tree_folder}
+        cp -r \${tree_folder}/* all_realigned_trees_combined
+      done
+
+    python /Yang-and-Smith-RBGV-scripts/resolve_polytomies.py all_realigned_trees_combined
+    """
+}
 
 
 process PRUNE_PARALOGS_MO_09 {
@@ -626,24 +655,17 @@ process PRUNE_PARALOGS_MO_09 {
 
   input:
     path(in_out_file)
-    path(realigned_trees_folder)
+    path(realigned_resolved_trees_folder)
 
   output:
     path("12_prune_MO_trees")
 
   script:
     """
-    mkdir all_realigned_trees_combined
-    for tree_folder in ${realigned_trees_folder}
-      do
-        echo \${tree_folder}
-        cp -r \${tree_folder}/* all_realigned_trees_combined
-      done
-
     mkdir 12_prune_MO_trees
 
     python /Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
-    all_realigned_trees_combined \
+    treefiles_polytomies_resolved \
     .treefile \
     ${params.process_09_prune_paralog_MO_minimum_taxa} \
     12_prune_MO_trees \
@@ -663,24 +685,17 @@ process PRUNE_PARALOGS_RT_10 {
 
   input:
   path(in_out_file)
-  path(realigned_trees_folder)
+  path(realigned_resolved_trees_folder)
 
   output:
   path("13_prune_RT_trees")
 
   script:
   """
-  mkdir all_realigned_trees_combined
-    for tree_folder in ${realigned_trees_folder}
-      do
-        echo \${tree_folder}
-        cp -r \${tree_folder}/* all_realigned_trees_combined
-      done
-
   mkdir 13_prune_RT_trees
 
   python /Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
-  all_realigned_trees_combined \
+  treefiles_polytomies_resolved \
   .treefile 13_prune_RT_trees \
   ${params.process_10_prune_paralogs_RT_minimum_ingroup_taxa} \
   ${in_out_file}
@@ -699,24 +714,17 @@ process PRUNE_PARALOGS_MI_11 {
 
   input:
   path(in_out_file)
-  path(realigned_trees_folder)
+  path(realigned_resolved_trees_folder)
 
   output:
   path("14_prune_MI_trees")
 
   script:
   """
-  mkdir all_realigned_trees_combined
-    for tree_folder in ${realigned_trees_folder}
-      do
-        echo \${tree_folder}
-        cp -r \${tree_folder}/* all_realigned_trees_combined
-      done
-
   mkdir 14_prune_MI_trees
 
   python /Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
-  all_realigned_trees_combined \
+  treefiles_polytomies_resolved \
   .treefile \
   ${params.process_11_prune_paralogs_MI_relative_tip_cutoff} \
   ${params.process_11_prune_paralogs_MI_absolute_tip_cutoff} \
@@ -865,20 +873,20 @@ process STRIP_NAMES_AND_REALIGN_MO_15 {
   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
 
   script:
-  if (params.no_supercontigs) {
-      no_supercontigs_string = "-no_supercontigs"
+  if (params.no_stitched_contig) {
+      no_stitched_contig_string = "-no_stitched_contig"
     } else {
-      no_supercontigs_string = ''
+      no_stitched_contig_string = ''
     }
 
-  if (params.no_supercontigs) {
+  if (params.no_stitched_contig) {
   """
   echo ${selected_alignments_MO}
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
   ${selected_alignments_MO} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string} 
+  ${no_stitched_contig_string} 
 
 
   batch_aln=(batch_*_stripped_names_alignments)
@@ -894,7 +902,7 @@ process STRIP_NAMES_AND_REALIGN_MO_15 {
   ${selected_alignments_MO} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string} 
+  ${no_stitched_contig_string} 
   """
 
   }
@@ -920,19 +928,19 @@ process STRIP_NAMES_AND_REALIGN_RT_16 {
   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
 
   script:
-  if (params.no_supercontigs) {
-      no_supercontigs_string = "-no_supercontigs"
+  if (params.no_stitched_contig) {
+      no_stitched_contig_string = "-no_stitched_contig"
     } else {
-      no_supercontigs_string = ''
+      no_stitched_contig_string = ''
     }
 
-  if (params.no_supercontigs) {
+  if (params.no_stitched_contig) {
   """
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
   ${selected_alignments_RT} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string}
+  ${no_stitched_contig_string}
 
   batch_aln=(batch_*_stripped_names_alignments)
   batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
@@ -946,7 +954,7 @@ process STRIP_NAMES_AND_REALIGN_RT_16 {
   ${selected_alignments_RT} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string}
+  ${no_stitched_contig_string}
   """
   }
 }
@@ -970,19 +978,19 @@ process STRIP_NAMES_AND_REALIGN_MI_17 {
   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
 
   script:
-  if (params.no_supercontigs) {
-      no_supercontigs_string = "-no_supercontigs"
+  if (params.no_stitched_contig) {
+      no_stitched_contig_string = "-no_stitched_contig"
     } else {
-      no_supercontigs_string = ''
+      no_stitched_contig_string = ''
     }
 
-  if (params.no_supercontigs) {
+  if (params.no_stitched_contig) {
   """
   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
   ${selected_alignments_MI} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string}
+  ${no_stitched_contig_string}
 
   batch_aln=(batch_*_stripped_names_alignments)
   batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
@@ -996,7 +1004,7 @@ process STRIP_NAMES_AND_REALIGN_MI_17 {
   ${selected_alignments_MI} \
   -threads_pool ${params.pool} \
   -threads_mafft ${params.threads} \
-  ${no_supercontigs_string}
+  ${no_stitched_contig_string}
   """
   }
 }
@@ -1033,12 +1041,14 @@ workflow {
                              [] )
   }
 
+  RESOLVE_POLYTOMIES( REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
+
   PRUNE_PARALOGS_MO_09( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   PRUNE_PARALOGS_RT_10( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   PRUNE_PARALOGS_MI_11( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-                        REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
+                        RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
   
   WRITE_ALIGNMENT_SUBSET_MO_12( PRUNE_PARALOGS_MO_09.out, 
                                 REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
