@@ -1,12 +1,10 @@
 BootStrap: library
 From: ubuntu:20.04
 
-
 %files
 
-
 %post
-	apt-get -y update
+    apt-get -y update
     apt-get install -y software-properties-common
     add-apt-repository universe
     apt-get -y update
@@ -28,13 +26,11 @@ From: ubuntu:20.04
     locale-gen en_US.UTF-8
     echo "LANG=en_US.UTF-8" >> /etc/default/locale
 
-
     # Install Yang and Smith scripts:
     git clone https://github.com/chrisjackson-pellicle/Yang-and-Smith-RBGV-scripts.git
 
     # Need to have copy of trim_tips.py that does not start with an integer, as it is imported in to 11_prune_paralogs_MI.py
     cp Yang-and-Smith-RBGV-scripts/04_trim_tips.py Yang-and-Smith-RBGV-scripts/trim_tips.py
-
 
     # Install HmmCleaner:
     curl -OL https://www.cpan.org/authors/id/P/PH/PHRED/Archive-Zip-1.68.tar.gz
@@ -45,7 +41,6 @@ From: ubuntu:20.04
     make test
     make install
     cd ..
-
 
     cpanm https://cpan.metacpan.org/authors/id/P/PE/PEVANS/Scalar-List-Utils-1.55.tar.gz
     cpanm https://cpan.metacpan.org/authors/id/E/ET/ETHER/Moose-2.2014.tar.gz
@@ -67,8 +62,6 @@ From: ubuntu:20.04
             bash Miniconda3-py39_4.12.0-Linux-x86_64.sh -b -p /usr/local/miniconda3 && \
             rm Miniconda3-py39_4.12.0-Linux-x86_64.sh
     fi
-
-
 
     # set conda path:
     export PATH="/usr/local/miniconda3/bin:$PATH"
@@ -106,13 +99,13 @@ From: ubuntu:20.04
     cd ..
 
 %environment
-        export PATH="/usr/local/miniconda3/bin:$PATH"
-        export PATH="/HybPiper:$PATH"
-        export PATH="/fast-tree-install:$PATH"
+    export PATH="/usr/local/miniconda3/bin:$PATH"
+    export PATH="/HybPiper:$PATH"
+    export PATH="/fast-tree-install:$PATH"
 
 %runscript
-        echo "This Singularity image is for use with the hybpiper.nf and paragone.nf scripts"
+    echo "This Singularity image is for use with the hybpiper.nf and paragone.nf scripts"
 
 %labels
-        Author Chris_J
+    Author Chris_J
 
