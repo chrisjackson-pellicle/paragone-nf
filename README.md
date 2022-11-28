@@ -8,7 +8,7 @@
 
 This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the bioRxiv manuscript [here][11]. The original documentation and scripts can be found [here][12].
 
-## ParaGone: containerised and pipelined using Singularity and Nextflow
+## paragone-nf: containerised and pipelined using Singularity and Nextflow
 
 To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container based on the Linux distribution Ubuntu 20.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well as additional new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [MAFFT][5], [BioPython][15], [HMMCleaner][2], [trimal][1], [FastTreeMP][23], [MUSCLE][24]). The container is called `hybpiper-paragone.sif`.
 
@@ -70,18 +70,24 @@ Example run command:
 
 See section [Pipeline parameters and options](#pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
-    --hybpiper_paralogs_directory <directory>    Path to folder containing HybPiper paralog fasta files)
+```
+      --hybpiper_paralogs_directory <directory>       
+                                  Path to folder containing HybPiper paralog fasta 
+                                  files.
 
-...and either
+      ..and either
 
-    --internal_outgroups <taxon1,taxon2,taxon3...>
-                                                 A comma-separated list of taxa present in the paralog fasta files
-                                                 to use as outgroups. Default is none
+      --internal_outgroups <taxon1,taxon2,taxon3...>  
+                                  A comma-separated list of taxa present in the 
+                                  paralog fasta files to use as outgroups. Default 
+                                  is none
 
-...and/or
+      ...and/or
 
-    --external_outgroups_file <file>             File containing fasta sequences of outgroup sequences for each
-                                                 gene
+      --external_outgroups_file <file>
+                                  File containing fasta sequences of outgroup 
+                                  sequences for each gene
+```
 
 ## Output folders and files
 
