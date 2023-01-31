@@ -2,7 +2,7 @@
 
 ---
 
-# paragone-nf: a hyb-seq paralogy resolution pipeline
+# paragone-nf: a paralogy resolution pipeline
 
 ## Original orthology inference manuscript, documentation and scripts
 
