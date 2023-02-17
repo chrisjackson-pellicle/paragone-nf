@@ -6,7 +6,7 @@
 
 ## Original orthology inference manuscript, documentation and scripts
 
-This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the bioRxiv manuscript [here][11]. The original documentation and scripts can be found [here][12].
+This pipeline makes use of the **paralogy resolution** (also described as **orthology inference**) approaches described and implemented by Yang and Smith 2014 [here][4]. These approaches have since been adapted for target capture datasets as described in the manuscript [here][11]. The original documentation and scripts can be found [here][12].
 
 ## paragone-nf: containerised and pipelined using Singularity and Nextflow
 
@@ -269,7 +269,7 @@ etc.
 [6]: https://www.ebi.ac.uk/seqdb/confluence/display/JDSAT/Clustal+Omega+Help+and+Documentation "Link to Clustal Omega website"
 [7]: https://github.com/chrisjackson-pellicle/hybpiper-nf/wiki/Output-folders-and-files "Link to hybpiper-nf Wiki entry"
 [8]: https://github.com/chrisjackson-pellicle/hybpiper-nf/wiki/Additional-pipeline-features-and-details#detection-of-putative-chimeric-contigs "Link to hybpiper-nf Wiki entry"
-[11]: https://www.biorxiv.org/content/10.1101/2020.08.21.261925v2 "Link to Yang 2021 bioarchives manuscript"
+[11]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8677558/ "Link to Yang 2022 manuscript"
 [12]: https://bitbucket.org/dfmoralesb/target_enrichment_orthology/src/master/ "Link to Yang and Smith Bitbucket"
 [13]:https://sylabs.io/docs/ "Link to Singularity website"
 [14]:https://www.nextflow.io/ "Link to Nextflow website"
