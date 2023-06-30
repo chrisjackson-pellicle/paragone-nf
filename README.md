@@ -1,5 +1,6 @@
 ***Note: this repository was previous called `Yang-and-Smith-paralogy-resolution`. It was renamed to  `paragone-nf`  on 28 November 2022, to maintain a consistent naming scheme with the Python package  `ParaGone` (in development).***
 
+TEST
 ---
 
 # paragone-nf: a paralogy resolution pipeline
