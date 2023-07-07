@@ -343,7 +343,7 @@ etc.
 - Add version to `paragone.nf` script;  v1.0.0
 - Refactor `paragone.nf` for to use the Python package [`ParaGone`](https://github.com/chrisjackson-pellicle/ParaGone).
 - New Singularity container with `ParaGone` installed.
-- Added a `conda` and `conda_slurm` profile. This allows the pipeline to be run using conda packages rather than the Singularity container. The corresponding conda environment is created in the Nextflow `work` directory.
+- Added a `conda` and `conda_slurm` profile to the `paragone.config` file. This allows the pipeline to be run using conda packages rather than the Singularity container. The corresponding conda environment is created in the Nextflow `work` directory.
 
 *28 November 2022*
 
