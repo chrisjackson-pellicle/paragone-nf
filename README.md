@@ -312,7 +312,7 @@ For details on adapting the pipeline to run on local and HPC computing resources
 
       --rt                        Run the RooTed ingroups (RT) algorithm
 
-      --new_mo_algorithm          If pruning trees using the MO algorithm, use an updated 
+      --mo_algorithm_paragone     If pruning trees using the MO algorithm, use an updated 
                                   ParaGone implementation rather than the original Yang and
                                   Smith 2014 implementation
 
