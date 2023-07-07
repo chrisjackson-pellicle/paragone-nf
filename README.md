@@ -1,8 +1,6 @@
-***Note: this repository was previous called `Yang-and-Smith-paralogy-resolution`. It was renamed to  `paragone-nf`  on 28 November 2022, to maintain a consistent naming scheme with the Python package  `ParaGone` (in development).***
-
----
-
 # paragone-nf: a paralogy resolution pipeline
+
+Current version: 1.0.0 (July 2023)
 
 ## Original orthology inference manuscript, documentation and scripts
 
@@ -10,9 +8,9 @@ This pipeline makes use of the **paralogy resolution** (also described as **orth
 
 ## paragone-nf: containerised and pipelined using Singularity and Nextflow
 
-To simplify running the Yang and Smith paralogy resolution methods on target capture data, I’ve provided a [Singularity][13] container based on the Linux distribution Ubuntu 20.04, containing the original scripts required to run the pipeline (including modifications, additions and bug fixes, see below for details), as well as additional new scripts and all the dependencies ([IQTree][3], [Clustal Omega][6], [MAFFT][5], [BioPython][15], [HMMCleaner][2], [trimal][1], [FastTreeMP][23], [MUSCLE][24]). The container is called `hybpiper-paragone.sif`.
+The software [ParaGone][https://github.com/chrisjackson-pellicle/ParaGone] includes modified versions of the Yang and Smith scripts (with added functionality, logging and reporting), along with new scripts to facilitate seamless running of the pipeline. To further simplify the process, here I’ve provided a [Singularity][13] container based on the Linux distribution Ubuntu 22.04, containing Paragone alogn with all the dependencies ([IQTree][3], [Clustal Omega][6], [MAFFT][5], [BioPython][15], [HMMCleaner][2], [trimal][1], [FastTreeMP][23], [TreeShrink][https://github.com/uym2/TreeShrink]). The container is called `hybpiper-paragone.sif`.
 
-To run the paralogy resolution pipeline using this container, I’ve provided a [Nextflow][14] script that uses the software in the Singularity container. This pipeline runs all steps with a single command. The pipeline script is called `paragone.nf`. It comes with an associated config file called `paragone.config`. The only input required is a folder containing `.fasta` files for each of your target-capture loci, including paralogs, and an optional `.fasta` file containing outgroup sequences (used by some of the paralogy resolution methods, see below). The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be user configured by modifying the provided config file. The pipeline can be run directly on your local computer, or on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
+To run the paralogy resolution pipeline using this container, I’ve provided a [Nextflow][14] script that uses the software in the Singularity container. This pipeline runs all steps with a single command. The pipeline script is called `paragone.nf`. It comes with an associated config file called `paragone.config`. The only input required is a folder containing `.fasta` files for each of your target-capture loci, including paralogs, and an optional `.fasta` file containing outgroup sequences (used by some of the paralogy resolution methods, see below). The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be configured by the user by modifying the provided config file. The pipeline can be run directly on your local computer, or on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
 
 ## Input data
 
@@ -66,14 +64,23 @@ Please see the Wiki entry [Running on a PC][18].
 
 Example run command:
 
-    nextflow run paragone.nf -c paragone.config -profile slurm -resume --hybpiper_paralogs_directory 11_paralogs --external_outgroups_file outgroups.fasta --outgroups sesame --internal_outgroups taxon1,taxon2,taxon3>
+    nextflow run paragone.nf \
+    -c paragone.config \
+    -profile slurm_singularity \
+    -resume \
+    --gene_fasta_directory 11_paralogs \
+    --external_outgroups_file outgroups.fasta \
+    --outgroups sesame \
+    --internal_outgroups <taxon1,taxon2,taxon3> \
+    --mo --mi --rt 
+
 
 See section [Pipeline parameters and options](#pipeline-parameters-and-options) for a full explanation of available parameters and flags. The required parameters are:
 
 ```
-      --hybpiper_paralogs_directory <directory>       
-                                  Path to folder containing HybPiper paralog fasta 
-                                  files.
+      --gene_fasta_directory <directory>       
+                                  Path to folder containing paralog fasta files for
+                                  each gene (e.g. as output by HybPiper)
 
       ..and either
 
@@ -87,15 +94,26 @@ See section [Pipeline parameters and options](#pipeline-parameters-and-options) 
       --external_outgroups_file <file>
                                   File containing fasta sequences of outgroup 
                                   sequences for each gene
+
+      ...and one or more of
+
+      --mo                        Resolve paralogs using the Monophyletic Outgroup 
+                                  (MO) algorithm
+
+      --mi                        Resolve paralogs using the Maximum Inclusion (MI)
+                                  algorithm
+
+      --rt                        Resolve paralogs using the RooTed ingroups (RT)
+                                  algorithm
 ```
 
 ## Output folders and files
 
-After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outdir <name>` parameter. This will consist of 23 subfolders. If you're just after the aligned .fasta files for each of your target genes as output by each of the paralogy resolution methods, the three main output folders of interest are probably:
+After running the pipeline, output can be found in the folder `results` (unless you have changed the name of the default output folder using the `--outdir <name>` parameter). This will consist of 28 subfolders. If you're just after the aligned `*.fasta` files for each of your target genes as output by each of the paralogy resolution methods, the three main output folders of interest are probably:
 
-- `18_alignments_stripped_names_MO_realigned`
-- `20_alignments_stripped_names_RT_realigned`
-- `22_alignments_stripped_names_MI_realigned`
+- `23_MO_final_alignments`
+- `24_MI_final_alignments`
+- `25_RT_final_alignments`
 
 For a full explanation of output folders and files, please see the Wiki entry [Output folders and files][20].
 
@@ -111,10 +129,13 @@ For details on adapting the pipeline to run on local and HPC computing resources
 
     nextflow run paragone.nf \
     -c paragone.config \
-    --hybpiper_paralogs_directory <directory> \
+    --gene_fasta_directory <directory> \
     --external_outgroups_file <file> \
     --external_outgroups <taxon1,taxon2,taxon3...> \
     --internal_outgroups <taxon1,taxon2,taxon3...> \
+    --mo \
+    --mi \
+    --rt \
     -profile <profile> \
     -resume
 
@@ -122,9 +143,9 @@ For details on adapting the pipeline to run on local and HPC computing resources
 
       ############################################################################
 
-      --hybpiper_paralogs_directory <directory>       
-                                  Path to folder containing HybPiper paralog fasta 
-                                  files.
+      --gene_fasta_directory <directory>       
+                                  Path to folder containing paralog fasta files for
+                                  each gene (e.g. as output by HybPiper)
 
       ..and either
 
@@ -138,6 +159,17 @@ For details on adapting the pipeline to run on local and HPC computing resources
       --external_outgroups_file <file>
                                   File containing fasta sequences of outgroup 
                                   sequences for each gene
+
+      ...and one or more of
+
+      --mo                        Resolve paralogs using the Monophyletic Outgroup 
+                                  (MO) algorithm
+
+      --mi                        Resolve paralogs using the Maximum Inclusion (MI)
+                                  algorithm
+
+      --rt                        Resolve paralogs using the RooTed ingroups (RT)
+                                  algorithm
 
       ############################################################################
 
@@ -156,9 +188,6 @@ For details on adapting the pipeline to run on local and HPC computing resources
                                   A comma-separated list of outgroup taxa to add 
                                   from the outgroups_file. Default is all
 
-      --batch_size <int>          Number of paralog fasta files to align/generate 
-                                  trees for in one batch. Default is 20
-
       -profile <profile>          Configuration profile to use. Can use multiple 
                                   (comma separated). Available: standard (default), 
                                   slurm
@@ -173,67 +202,127 @@ For details on adapting the pipeline to run on local and HPC computing resources
       
       --threads <int>             Number of threads per multiprocessing pool 
                                   instance. Used for programs that support 
-                                  multi-threading (e.g. MAFFT, IQ-TREE). Default 
+                                  multi-threading (e.g. mafft, IQ-TREE). Default 
                                   is 1
       
-      --no_stitched_contig        Use this flag if you are processing paralogs 
-                                  from a run of HybPiper that used the 
-                                  --no_stitched_contig flag. MAFFT alignments are 
-                                  re-aligned using Clustal Omega, which can do a 
-                                  better job in these cases. Default is off
-      
-      --process_04_trim_tips_relative_cutoff <float>  
-                                  When pruning long tips during the tree QC stage, 
-                                  provide a branch length for the maximum imbalance 
-                                  between sister tips allowed. Default is 0.2
-      
-      --process_04_trim_tips_absolute_cutoff <float>  
-                                  When pruning long tips during the tree QC stage, 
-                                  provide a branch length for the maximum allowed 
-                                  tip branch length. Default is 0.4
+      --use_clustal               If specified, alignments are performed using 
+                                  Clustal Omega rather than MAFFT. If the parameter
+                                  "--mafft_adjustdirection" is also provided, 
+                                  alignments are performed with MAFFT first, followed 
+                                  by realignment using with Clustal Omega
 
       --mafft_algorithm           If using MAFFT (default), use this alignment 
                                   algorithm (e.g. linsi, einsi, etc.). Default is 
-                                  to use the flag --auto 
+                                  to use the flag --auto
 
-      --use_muscle                Use MUSCLE to align sequences instead of MAFFT. 
-                                  Default is MAFFT
+      --mafft_adjustdirection     Allow MAFFT to generate reverse complement sequences, 
+                                  as necessary, and align them together with the 
+                                  remaining sequences. Note that the first sequence is 
+                                  assumed to be in the correct orientation. If this 
+                                  parameter is used, it is only applied during the 
+                                  first alignment step of the pipeline
+
+      --no_trimming               Do not trim alignments using Trimal
+
+      --trimal_terminalonly_off   Consider all alignment positions when trimming using 
+                                  Trimal, rather than only terminal columns
+
+      --trimal_gapthreshold       1 - (fraction of sequences with a gap allowed) when 
+                                  trimming alignments with Trimal. Range: [0 - 1]. 
+                                  Default is 0.12
+
+      --trimal_simthreshold       Trimal minimum average similarity allowed when 
+                                  trimming alignments with Trimal. Range: [0 - 1]
+
+      --trimal_cons               Minimum percentage of positions in the original 
+                                  alignment to conserve when trimming alignments with 
+                                  Trimal. Range: [0 - 100]
+
+      --trimal_nogaps             Remove all positions with gaps in the alignment when 
+                                  trimming
+
+      --trimal_noallgaps          Remove columns composed only by gaps when trimming 
+                                  alignments
+
+      --trimal_gappyout           When trimming alignments with Trimal, use the automated 
+                                  selection on "gappyout" mode. This method only uses 
+                                  information based on gaps distribution
+
+      --trimal_strict             When trimming alignments with Trimal, use the automated 
+                                  selection on "strict" mode
+
+      --trimal_strictplus         When trimming alignments with Trimal, use the automated 
+                                  selection on "strictplus" mode
+
+      --trimal_automated1         When trimming alignments with Trimal, use a heuristic 
+                                  selection of the automatic method based on similarity 
+                                  statistics
+
+      --trimal_block              Minimum column block size to be kept in the trimmed 
+                                  alignment. Available with manual and automatic (gappyout) 
+                                  methods when trimming alignments with Trimal
+
+      --trimal_resoverlap         Minimum overlap of a positions with other positions in 
+                                  the column to be considered a "good position" when trimming 
+                                  alignments with Trimal. Range: [0 - 1]
+
+      --trimal_seqoverlap         Minimum percentage of "good positions" that a sequence 
+                                  must have in order to be conserved when trimming alignments 
+                                  with Trimal. Range: [0 - 100]
+
+      --trimal_w                  (half) Window size, score of position i is the average of 
+                                  the window (i - n) to (i + n), when trimming alignments with 
+                                  Trimal
+
+      --trimal_gw                 (half) Window size only applies to statistics/methods based 
+                                  on gaps, when trimming alignments with Trimal
+
+      --trimal_sw                 (half) Window size only applies to statistics/methods based 
+                                  on 'similarity, when trimming alignments with Trimal
+
+      --no_cleaning               Do not clean alignments using HmmCleaner.pl
+
+      --run_profiler              If supplied, run the subcommand using cProfile. Saves a 
+                                  *.csv file of results
+
+      --generate_bootstraps       Generate bootstraps for trees. For IQ-TREE, uses 
+                                  ultrafast bootstrap approximation (UFBoot) 
+                                  via the options '-bb 1000 -bnni'. For FastTree, 
+                                  uses the SH test. Default is no bootstraps
 
       --use_fasttree              Use FastTreeMP to generate trees instead of 
                                   IQ-TREE. Default is IQ-TREE
 
-      --process_06_branch_length_cutoff <float>       
+      --min_tips                  The minimum number of tips in a tree after trimming/masking 
+                                  tips or pruning deep paralogs; if below this value, no output 
+                                  tree is written. Default is 4
+
+      --treeshrink_q_value        q value for TreeShrink; the quantile(s) to set threshold. 
+                                  Default is 0.05
+
+      --cut_deep_paralogs_internal_branch_length_cutoff
                                   When pruning long internal branches (putative 
-                                  deep paralogs)during the tree QC stage, provide 
+                                  deep paralogs) during the tree QC stage, provide 
                                   a branch length for the maximum allowed internal 
                                   branch length. Default is 0.3
-      
-      --process_06_minimum_taxa <int>                 
-                                  After the final tree-pruning step prior to 
-                                  paralogy resolution, only retain trees with a 
-                                  minimum number of taxa remaining. Default is 3
-      
-      --process_09_prune_paralog_MO_minimum_taxa <int>
-                                  For the MO method, only process trees with a 
-                                  minimum number of taxa. Default is 2
-      
-      --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
-                                  For the RT method, only process trees with a 
-                                  minimum number of ingroup taxa. Default is 2
-      
-      --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
-                                  Default is 0.2
-      
-      --process_11_prune_paralogs_MI_absolute_tip_cutoff <float>
-                                  Default is 0.4
-      
-      --process_11_prune_paralogs_MI_minimum_taxa <int>    
-                                  Default is 2
 
-      --bootstraps                Generate bootstraps for trees. For IQ-TREE, uses 
-                                  ultrafast bootstrap approximation (UFBoot) 
-                                  via the options '-bb 1000 -bnni'. For FastTree, 
-                                  uses the SH test. Default is no bootstraps
+      --mo                        Run the Monophyletic Outgroups (MO) algorithm
+
+      --mi                        Run the Maximum Inclusion (MI) algorithm
+
+      --rt                        Run the RooTed ingroups (RT) algorithm
+
+      --new_mo_algorithm          If pruning trees using the MO algorithm, use an updated 
+                                  ParaGone implementation rather than the original Yang and
+                                  Smith 2014 implementation
+
+      --minimum_taxa              Minimum number of taxa required in pruned trees. Default 
+                                  is 4
+
+      --ignore_1to1_orthologs     Do not output 1to1 orthologs, i.e. trees with no paralogs
+
+      --debug                     If supplied, log additional information when running the MO pruning algorithm. '
+                                  This can make the log files much larger
 ```
 
 Please see the Wiki entry [Additional pipeline features and details][22] for further explanation of the parameters above, and general pipeline functionality.
@@ -248,6 +337,13 @@ e.g.
 etc.
 
 ## Changelog
+
+*07 July 2023*
+
+- Add version to `paragone.nf` script;  v1.0.0
+- Refactor `paragone.nf` for to use the Python package [`ParaGone`][https://github.com/chrisjackson-pellicle/ParaGone].
+- New Singularity container with `ParaGone` installed.
+- Added a `conda` and `conda_slurm` profile. This allows the pipeline to be run using conda packages rather than the Singularity container. The corresponding conda environment is created in the Nextflow `work` directory.
 
 *28 November 2022*
 

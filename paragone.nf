@@ -11,7 +11,7 @@ nextflow.enable.dsl=2
 /////////////////////////////////////////////////////////////////////////////////////////
 
 if( params.remove('version') ) {
-    println('paragone-nf version 1.0.0, running ParaGone version 0.0.12c')
+    println('paragone-nf version 1.0.0, running ParaGone version 0.0.13c')
     exit 0
 } 
 
@@ -21,12 +21,14 @@ if( params.remove('version') ) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 allowed_params = [
-                  "gene_fasta_directory"
+                  "help",
+                  "outdir",
+                  "gene_fasta_directory",
                   "gene_name_delimiter",
                   "gene_name_field_num",
                   "external_outgroups_file",
-                  "external_outgroup",
-                  "internal_outgroup",
+                  "external_outgroups",
+                  "internal_outgroups",
                   "pool",
                   "threads",
                   "use_clustal",
@@ -50,12 +52,11 @@ allowed_params = [
                   "trimal_gw",
                   "trimal_sw",
                   "no_cleaning",
-                  "run_profiler"
+                  "run_profiler",
                   "generate_bootstraps",
                   "use_fasttree",
                   "min_tips",
                   "treeshrink_q_value",
-                  "mask_tips_alignment_file_suffix",
                   "cut_deep_paralogs_internal_branch_length_cutoff",
                   "mo",
                   "mi",
@@ -91,6 +92,9 @@ def helpMessage() {
     --external_outgroups_file <file> \
     --external_outgroups <taxon1,taxon2,taxon3...> \
     --internal_outgroups <taxon1,taxon2,taxon3...> \
+    --mo \
+    --mi \
+    --rt \
     -profile <profile> \
     -resume
 
@@ -100,20 +104,31 @@ def helpMessage() {
 
       --gene_fasta_directory <directory>       
                                   Path to folder containing paralog fasta files for
-                                  each gene (e.g. as output by HybPiper).
+                                  each gene (e.g. as output by HybPiper)
 
       ..and either
 
       --internal_outgroups <taxon1,taxon2,taxon3...>  
                                   A comma-separated list of taxa present in the 
                                   paralog fasta files to use as outgroups. Default 
-                                  is none.
+                                  is none
 
       ...and/or
 
       --external_outgroups_file <file>
                                   File containing fasta sequences of outgroup 
                                   sequences for each gene
+
+      ...and one or more of
+
+      --mo                        Resolve paralogs using the Monophyletic Outgroup 
+                                  (MO) algorithm
+
+      --mi                        Resolve paralogs using the Maximum Inclusion (MI)
+                                  algorithm
+
+      --rt                        Resolve paralogs using the RooTed ingroups (RT)
+                                  algorithm
 
       ############################################################################
 
@@ -132,9 +147,6 @@ def helpMessage() {
                                   A comma-separated list of outgroup taxa to add 
                                   from the outgroups_file. Default is all
 
-      --batch_size <int>          Number of paralog fasta files to align/generate 
-                                  trees for in one batch. Default is 20
-
       -profile <profile>          Configuration profile to use. Can use multiple 
                                   (comma separated). Available: standard (default), 
                                   slurm
@@ -152,64 +164,126 @@ def helpMessage() {
                                   multi-threading (e.g. mafft, IQ-TREE). Default 
                                   is 1
       
-      --no_stitched_contig        Use this flag if you are processing paralogs 
-                                  from a run of HybPiper that used the 
-                                  --no_stitched_contig flag. Mafft alignments are 
-                                  re-aligned using clustal omega, which can do a 
-                                  better job in these cases. Default is off
-      
-      --process_04_trim_tips_relative_cutoff <float>  
-                                  When pruning long tips during the tree QC stage, 
-                                  provide a branch length for the maximum imbalance 
-                                  between sister tips allowed. Default is 0.2
-      
-      --process_04_trim_tips_absolute_cutoff <float>  
-                                  When pruning long tips during the tree QC stage, 
-                                  provide a branch length for the maximum allowed 
-                                  tip branch length. Default is 0.4
+      --use_clustal               If specified, alignments are performed using 
+                                  Clustal Omega rather than MAFFT. If the parameter
+                                  "--mafft_adjustdirection" is also provided, 
+                                  alignments are performed with MAFFT first, followed 
+                                  by realignment using with Clustal Omega
 
       --mafft_algorithm           If using MAFFT (default), use this alignment 
                                   algorithm (e.g. linsi, einsi, etc.). Default is 
-                                  to use the flag --auto 
+                                  to use the flag --auto
 
-      --use_muscle                Use MUSCLE to align sequences intead of MAFFT. 
-                                  Default is MAFFT
+      --mafft_adjustdirection     Allow MAFFT to generate reverse complement sequences, 
+                                  as necessary, and align them together with the 
+                                  remaining sequences. Note that the first sequence is 
+                                  assumed to be in the correct orientation. If this 
+                                  parameter is used, it is only applied during the 
+                                  first alignment step of the pipeline
+
+      --no_trimming               Do not trim alignments using Trimal
+
+      --trimal_terminalonly_off   Consider all alignment positions when trimming using 
+                                  Trimal, rather than only terminal columns
+
+      --trimal_gapthreshold       1 - (fraction of sequences with a gap allowed) when 
+                                  trimming alignments with Trimal. Range: [0 - 1]. 
+                                  Default is 0.12
+
+      --trimal_simthreshold       Trimal minimum average similarity allowed when 
+                                  trimming alignments with Trimal. Range: [0 - 1]
+
+      --trimal_cons               Minimum percentage of positions in the original 
+                                  alignment to conserve when trimming alignments with 
+                                  Trimal. Range: [0 - 100]
+
+      --trimal_nogaps             Remove all positions with gaps in the alignment when 
+                                  trimming
+
+      --trimal_noallgaps          Remove columns composed only by gaps when trimming 
+                                  alignments
+
+      --trimal_gappyout           When trimming alignments with Trimal, use the automated 
+                                  selection on "gappyout" mode. This method only uses 
+                                  information based on gaps distribution
+
+      --trimal_strict             When trimming alignments with Trimal, use the automated 
+                                  selection on "strict" mode
+
+      --trimal_strictplus         When trimming alignments with Trimal, use the automated 
+                                  selection on "strictplus" mode
+
+      --trimal_automated1         When trimming alignments with Trimal, use a heuristic 
+                                  selection of the automatic method based on similarity 
+                                  statistics
+
+      --trimal_block              Minimum column block size to be kept in the trimmed 
+                                  alignment. Available with manual and automatic (gappyout) 
+                                  methods when trimming alignments with Trimal
+
+      --trimal_resoverlap         Minimum overlap of a positions with other positions in 
+                                  the column to be considered a "good position" when trimming 
+                                  alignments with Trimal. Range: [0 - 1]
+
+      --trimal_seqoverlap         Minimum percentage of "good positions" that a sequence 
+                                  must have in order to be conserved when trimming alignments 
+                                  with Trimal. Range: [0 - 100]
+
+      --trimal_w                  (half) Window size, score of position i is the average of 
+                                  the window (i - n) to (i + n), when trimming alignments with 
+                                  Trimal
+
+      --trimal_gw                 (half) Window size only applies to statistics/methods based 
+                                  on gaps, when trimming alignments with Trimal
+
+      --trimal_sw                 (half) Window size only applies to statistics/methods based 
+                                  on 'similarity, when trimming alignments with Trimal
+
+      --no_cleaning               Do not clean alignments using HmmCleaner.pl
+
+      --run_profiler              If supplied, run the subcommand using cProfile. Saves a 
+                                  *.csv file of results
+
+      --generate_bootstraps       Generate bootstraps for trees. For IQ-TREE, uses 
+                                  ultrafast bootstrap approximation (UFBoot) 
+                                  via the options '-bb 1000 -bnni'. For FastTree, 
+                                  uses the SH test. Default is no bootstraps
 
       --use_fasttree              Use FastTreeMP to generate trees instead of 
                                   IQ-TREE. Default is IQ-TREE
 
-      --process_06_branch_length_cutoff <float>       
+      --min_tips                  The minimum number of tips in a tree after trimming/masking 
+                                  tips or pruning deep paralogs; if below this value, no output 
+                                  tree is written. Default is 4
+
+      --treeshrink_q_value        q value for TreeShrink; the quantile(s) to set threshold. 
+                                  Default is 0.05
+
+      --cut_deep_paralogs_internal_branch_length_cutoff
                                   When pruning long internal branches (putative 
-                                  deep paralogs)during the tree QC stage, provide 
+                                  deep paralogs) during the tree QC stage, provide 
                                   a branch length for the maximum allowed internal 
                                   branch length. Default is 0.3
-      
-      --process_06_minimum_taxa <int>                 
-                                  After the final tree-pruning step prior to 
-                                  paralogy resolution, only retain trees with a 
-                                  minimum number of taxa remaining. Default is 3
-      
-      --process_09_prune_paralog_MO_minimum_taxa <int>
-                                  For the MO method, only process trees with a 
-                                  minimum number of taxa. Default is 2
-      
-      --process_10_prune_paralogs_RT_minimum_ingroup_taxa <int>
-                                  For the RT method, only process trees with a 
-                                  minimum number of ingroup taxa. Default is 2
-      
-      --process_11_prune_paralogs_MI_relative_tip_cutoff <float>
-                                  Default is 0.2
-      
-      --process_11_prune_paralogs_MI_absolute_tip_cutoff <float>
-                                  Default is 0.4
-      
-      --process_11_prune_paralogs_MI_minimum_taxa <int>    
-                                  Default is 2
 
-      --bootstraps                Generate bootstraps for trees. For IQ-TREE, uses 
-                                  ultrafast bootstrap approximation (UFBoot) 
-                                  via the options '-bb 1000 -bnni'. For FastTree, 
-                                  uses the SH test. Default is no bootstraps
+      --mo                        Run the Monophyletic Outgroups (MO) algorithm
+
+      --mi                        Run the Maximum Inclusion (MI) algorithm
+
+      --rt                        Run the RooTed ingroups (RT) algorithm
+
+      --new_mo_algorithm          If pruning trees using the MO algorithm, use an updated 
+                                  ParaGone implementation rather than the original Yang and
+                                  Smith 2014 implementation
+
+      --minimum_taxa              Minimum number of taxa required in pruned trees. Default 
+                                  is 4
+
+      --ignore_1to1_orthologs     Do not output 1to1 orthologs, i.e. trees with no paralogs
+
+      --debug                     If supplied, log additional information when running the MO pruning algorithm. '
+                                  This can make the log files much larger
+
+      --keep_intermediate_files   N/A
 
 
     """.stripIndent()
@@ -219,8 +293,17 @@ def helpMessage() {
 Check that the input directory is provided, and either (at least) a file of external outgroups or list of internal
 taxa to use:
 */
-if (params.help || !params.gene_fasta_directory || (!params.external_outgroups_file && !params.internal_outgroups)) {
+if (params.help || !params.gene_fasta_directory || (!params.external_outgroups_file && !params.internal_outgroups) || 
+  (!params.mo && !params.mi && !params.rt)) {
   helpMessage()
+  println(
+  """
+  ERROR: Please provide the minimum parameters. The pipeline requires a directory of paralog fasta files 
+  via the parameter "--gene_fasta_directory", and either a file of external outgroups via the parameter
+  "--external_outgroups_file" or a comma-seperated list on ingroup taxa via the parameter "--internal_outgroups".
+  At least one paralogy resoluton method should also be provided via "--mo", "--mi', "--rt".
+  """
+  )
   exit 0
 }
 
@@ -235,26 +318,30 @@ Channel
   .first()
   .set { outgroups_file_ch }
 
-// HybPiper paralog fasta files:
+// Paralog fasta files:
 Channel
   .fromPath("${params.gene_fasta_directory}", checkIfExists: true)
   .set { paralogs_ch }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //  CREATE COMMAND LISTS FOR EACH PARAGONE SUBCOMMAND
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// Create `paragone check_and_align` command string:
+// Create subcommand lists:
 def check_and_align_command_list = []
+def alignment_to_tree_command_list = []
+def qc_trees_and_extract_fasta_command_list = []
+def align_selected_and_tree_command_list = []
+def prune_paralogs_command_list = []
+def final_alignments_command_list = []
 
 // Parse internal outgroups, if provided:
 if (params.internal_outgroups) {
-  internal_outgroups_list = params.internal_outgroups?.tokenize(',')
+  internal_outgroups_list = params.internal_outgroups?.toString().tokenize(',')
   internal_outgroups_string = ''
   for (outgroup in internal_outgroups_list) {
-    internal_outgroup_string = "-internal_outgroup ${outgroup} "
+    internal_outgroup_string = "--internal_outgroup ${outgroup} "
     internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
   }
 
@@ -270,17 +357,222 @@ if (params.external_outgroups_file) {
 
 // Parse selected external outgroup taxa, if provided:
 if (params.external_outgroups) {
-  external_outgroups_list = params.external_outgroups?.tokenize(',')
+  external_outgroups_list = params.external_outgroups?.toString().tokenize(',')
   external_outgroups_string = ''
   for (outgroup in external_outgroups_list) {
-    external_outgroup_string = "-external_outgroup ${outgroup} "
+    external_outgroup_string = "--external_outgroup ${outgroup} "
     external_outgroups_string = external_outgroups_string + external_outgroup_string
   }
 
   check_and_align_command_list << external_outgroups_string
 }
 
+// Parse general parameters:
+if (params.gene_name_delimiter) {
+  check_and_align_command_list << "--gene_name_delimiter ${params.gene_name_delimiter}"
+}
 
+if (params.gene_name_field_num) {
+  check_and_align_command_list << "--gene_name_field_num ${params.gene_name_field_num}"
+}
+
+if (params.pool) {
+  check_and_align_command_list << "--pool ${params.pool}"
+  alignment_to_tree_command_list << "--pool ${params.pool}"
+  align_selected_and_tree_command_list << "--pool ${params.pool}"
+  final_alignments_command_list << "--pool ${params.pool}"
+}
+
+if (params.threads) {
+  check_and_align_command_list << "--threads ${params.threads}"
+  alignment_to_tree_command_list << "--threads ${params.threads}"
+  align_selected_and_tree_command_list << "--threads ${params.threads}"
+  final_alignments_command_list << "--threads ${params.threads}"
+}
+
+if (params.use_clustal) {
+  check_and_align_command_list << "--use_clustal"
+  align_selected_and_tree_command_list << "--use_clustal"
+  final_alignments_command_list << "--use_clustal"
+}
+
+if (params.mafft_algorithm) {
+  check_and_align_command_list << "--mafft_algorithm ${params.mafft_algorithm}"
+  align_selected_and_tree_command_list << "--mafft_algorithm ${params.mafft_algorithm}"
+  final_alignments_command_list << "--mafft_algorithm ${params.mafft_algorithm}"
+}
+
+if (params.mafft_adjustdirection) {
+  check_and_align_command_list << "--mafft_adjustdirection"
+}
+
+if (params.no_trimming) {
+  check_and_align_command_list << "--no_trimming"
+  align_selected_and_tree_command_list << "--no_trimming"
+  final_alignments_command_list << "--no_trimming"
+}
+
+if (params.trimal_terminalonly_off) {
+  check_and_align_command_list << "--trimal_terminalonly_off"
+  align_selected_and_tree_command_list << "--trimal_terminalonly_off"
+  final_alignments_command_list << "--trimal_terminalonly_off"
+}
+
+if (params.trimal_gapthreshold) {
+  check_and_align_command_list << "--trimal_gapthreshold ${params.trimal_gapthreshold}"
+  align_selected_and_tree_command_list << "--trimal_gapthreshold ${params.trimal_gapthreshold}"
+  final_alignments_command_list << "--trimal_gapthreshold ${params.trimal_gapthreshold}"
+}
+
+if (params.trimal_simthreshold) {
+  check_and_align_command_list << "--trimal_simthreshold ${params.trimal_simthreshold}"
+  align_selected_and_tree_command_list << "--trimal_simthreshold ${params.trimal_simthreshold}"
+  final_alignments_command_list << "--trimal_simthreshold ${params.trimal_simthreshold}"
+}
+
+if (params.trimal_cons) {
+  check_and_align_command_list << "--trimal_cons ${params.trimal_cons}"
+  align_selected_and_tree_command_list << "--trimal_cons ${params.trimal_cons}"
+  final_alignments_command_list << "--trimal_cons ${params.trimal_cons}"
+}
+
+if (params.trimal_nogaps) {
+  check_and_align_command_list << "--trimal_nogaps"
+  align_selected_and_tree_command_list << "--trimal_nogaps"
+  final_alignments_command_list << "--trimal_nogaps"
+}
+
+if (params.trimal_noallgaps) {
+  check_and_align_command_list << "--trimal_noallgaps"
+  align_selected_and_tree_command_list << "--trimal_noallgaps"
+  final_alignments_command_list << "--trimal_noallgaps"
+}
+
+if (params.trimal_gappyout) {
+  check_and_align_command_list << "--trimal_gappyout"
+  align_selected_and_tree_command_list << "--trimal_gappyout"
+  final_alignments_command_list << "--trimal_gappyout"
+}
+
+if (params.trimal_strict) {
+  check_and_align_command_list << "--trimal_strict"
+  align_selected_and_tree_command_list << "--trimal_strict"
+  final_alignments_command_list << "--trimal_strict"
+}
+
+if (params.trimal_strictplus) {
+  check_and_align_command_list << "--trimal_strictplus"
+  align_selected_and_tree_command_list << "--trimal_strictplus"
+  final_alignments_command_list << "--trimal_strictplus"
+}
+
+if (params.trimal_automated1) {
+  check_and_align_command_list << "--trimal_automated1"
+  align_selected_and_tree_command_list << "--trimal_automated1"
+  final_alignments_command_list << "--trimal_automated1"
+}
+
+if (params.trimal_block) {
+  check_and_align_command_list << "--trimal_block ${params.trimal_block}"
+  align_selected_and_tree_command_list << "--trimal_block ${params.trimal_block}"
+  final_alignments_command_list << "--trimal_block ${params.trimal_block}"
+}
+
+if (params.trimal_resoverlap) {
+  check_and_align_command_list << "--trimal_resoverlap ${params.trimal_resoverlap}"
+  align_selected_and_tree_command_list << "--trimal_resoverlap ${params.trimal_resoverlap}"
+  final_alignments_command_list << "--trimal_resoverlap ${params.trimal_resoverlap}"
+}
+
+if (params.trimal_seqoverlap) {
+  check_and_align_command_list << "--trimal_seqoverlap ${params.trimal_seqoverlap}"
+  align_selected_and_tree_command_list << "--trimal_seqoverlap ${params.trimal_seqoverlap}"
+  final_alignments_command_list << "--trimal_seqoverlap ${params.trimal_seqoverlap}"
+}
+
+if (params.trimal_w) {
+  check_and_align_command_list << "--trimal_w ${params.trimal_w}"
+  align_selected_and_tree_command_list << "--trimal_w ${params.trimal_w}"
+  final_alignments_command_list << "--trimal_w ${params.trimal_w}"
+}
+
+if (params.trimal_gw) {
+  check_and_align_command_list << "--trimal_gw ${params.trimal_gw}"
+  align_selected_and_tree_command_list << "--trimal_gw ${params.trimal_gw}"
+  final_alignments_command_list << "--trimal_gw ${params.trimal_gw}"
+}
+
+if (params.trimal_sw) {
+  check_and_align_command_list << "--trimal_sw ${params.trimal_sw}"
+  align_selected_and_tree_command_list << "--trimal_sw ${params.trimal_sw}"
+  final_alignments_command_list << "--trimal_sw ${params.trimal_sw}"
+}
+
+if (params.no_cleaning) {
+  check_and_align_command_list << "--no_cleaning"
+}
+
+if (params.generate_bootstraps) {
+  alignment_to_tree_command_list << "--generate_bootstraps"
+  align_selected_and_tree_command_list << "--generate_bootstraps"
+}
+
+if (params.use_fasttree) {
+  alignment_to_tree_command_list << "--use_fasttree"
+  align_selected_and_tree_command_list << "--use_fasttree"
+}
+
+if (params.min_tips) {
+  qc_trees_and_extract_fasta_command_list << "--min_tips ${params.min_tips}"
+}
+
+if (params.treeshrink_q_value) {
+  qc_trees_and_extract_fasta_command_list << "--treeshrink_q_value ${params.treeshrink_q_value}"
+}
+
+if (params.cut_deep_paralogs_internal_branch_length_cutoff) {
+  qc_trees_and_extract_fasta_command_list << "--cut_deep_paralogs_internal_branch_length_cutoff ${params.cut_deep_paralogs_internal_branch_length_cutoff}"
+}
+
+if (params.mo) {
+  prune_paralogs_command_list << "--mo"
+  final_alignments_command_list << "--mo"
+}
+
+if (params.mi) {
+  prune_paralogs_command_list << "--mi"
+  final_alignments_command_list << "--mi"
+}
+
+if (params.rt) {
+  prune_paralogs_command_list << "--rt"
+  final_alignments_command_list << "--rt"
+}
+
+if (params.new_mo_algorithm) {
+  prune_paralogs_command_list << "--new_mo_algorithm"
+}
+
+if (params.minimum_taxa) {
+  prune_paralogs_command_list << "--minimum_taxa ${params.minimum_taxa}"
+}
+
+if (params.ignore_1to1_orthologs) {
+  prune_paralogs_command_list << "--ignore_1to1_orthologs"
+}
+
+if (params.debug) {
+  prune_paralogs_command_list << "--debug"
+}
+
+if (params.run_profiler) {
+  check_and_align_command_list << "--run_profiler"
+  alignment_to_tree_command_list << "--run_profiler"
+  qc_trees_and_extract_fasta_command_list << "--run_profiler"
+  align_selected_and_tree_command_list << "--run_profiler"
+  prune_paralogs_command_list << "--run_profiler"
+  final_alignments_command_list << "--run_profiler"
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -288,51 +580,69 @@ if (params.external_outgroups) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 workflow {
-  CHECK_AND_ALIGN( outgroups_file_ch, paralogs_ch )
-  // CHECK_AND_BATCH_PARALOGS_01.out.outgroup_coverage_ch.subscribe { log.info '\n' + "$it" + '\n' } // Log outgroup coverage statistics to screen and `nextflow.log` file
-  // // CHECK_AND_BATCH_PARALOGS_01.out.batch_folders_ch.flatten()subscribe { log.info '\n' + "$it" + '\n' }
+  CHECK_AND_ALIGN( paralogs_ch, outgroups_file_ch )
 
-  // ALIGN_AND_HMMCLEAN_02( CHECK_AND_BATCH_PARALOGS_01.out.batch_folders_ch.flatten() )
-  // ALIGNMENT_TO_TREE_03( ALIGN_AND_HMMCLEAN_02.out.batch_alignments_hmmcleaned_ch ) 
-  // TRIM_TIPS_04( ALIGNMENT_TO_TREE_03.out.batch_treefiles_ch.collect() )
-  // MASK_TIPS_05( TRIM_TIPS_04.out, 
-  //               ALIGN_AND_HMMCLEAN_02.out.batch_alignments_hmmcleaned_ch.collect() )
-  // CUT_LONG_INTERNAL_BRANCHES_06( MASK_TIPS_05.out.masked_tips_ch )
-  // WRITE_ALIGNMENT_SUBSET_07( CUT_LONG_INTERNAL_BRANCHES_06.out, 
-  //                            MASK_TIPS_05.out.all_hmmclean_alignments_combined_ch )
 
-  // if (params.external_outgroups_file) {
-  //     REALIGN_AND_IQTREE_08(WRITE_ALIGNMENT_SUBSET_07.out.subset_batch_folders_ch.flatten(), 
-  //                           MASK_TIPS_05.out.all_hmmclean_alignments_combined_ch, 
-  //                           CHECK_AND_BATCH_PARALOGS_01.out.external_outgroups_sanitised_ch.first() ) // WARN: The operator `first` is useless when applied to a value channel which returns a single value by definition
-  // } else {
-  //     REALIGN_AND_IQTREE_08( WRITE_ALIGNMENT_SUBSET_07.out.subset_batch_folders_ch.flatten(), 
-  //                            MASK_TIPS_05.out.all_hmmclean_alignments_combined_ch.first(), 
-  //                            [] )
-  // }
+  // Get the correct alignment outdir depending on trim/clean settings:
+  if (params.no_trimming && params.no_cleaning) {
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_ch
+  } else if (params.no_cleaning && !params.no_trimming) {
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_trimmed_ch
+  } else if (params.no_trimming && !params.no_cleaning) {
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_hmmcleaned_ch
+  } else {
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_trimmed_hmmcleaned_ch
+  }
 
-  // RESOLVE_POLYTOMIES( REALIGN_AND_IQTREE_08.out.realigned_trees_ch.collect() )
+  ALIGNMENT_TO_TREE( alignments_ch,
+                     CHECK_AND_ALIGN.out.check_and_align_logs_and_reports_ch) 
 
-  // PRUNE_PARALOGS_MO_09( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-  //                       RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
-  // PRUNE_PARALOGS_RT_10( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-  //                       RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
-  // PRUNE_PARALOGS_MI_11( REALIGN_AND_IQTREE_08.out.in_and_outgroups_list_ch.first(), 
-  //                       RESOLVE_POLYTOMIES.out.trees_resolved_polytomies_ch )
-  
-  // WRITE_ALIGNMENT_SUBSET_MO_12( PRUNE_PARALOGS_MO_09.out, 
-  //                               REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
-  // WRITE_ALIGNMENT_SUBSET_RT_13( PRUNE_PARALOGS_RT_10.out, 
-  //                               REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
-  // WRITE_ALIGNMENT_SUBSET_MI_14( PRUNE_PARALOGS_MI_11.out, 
-  //                               REALIGN_AND_IQTREE_08.out.realigned_fasta_ch.collect() )
-  
-  // STRIP_NAMES_AND_REALIGN_MO_15( WRITE_ALIGNMENT_SUBSET_MO_12.out.mo_subset_batch_folders_ch.flatten() )
-  // STRIP_NAMES_AND_REALIGN_RT_16( WRITE_ALIGNMENT_SUBSET_RT_13.out.rt_subset_batch_folders_ch.flatten() )
-  // STRIP_NAMES_AND_REALIGN_MI_17( WRITE_ALIGNMENT_SUBSET_MI_14.out.mi_subset_batch_folders_ch.flatten() )
+  QC_TREES_AND_EXTRACT_FASTA( ALIGNMENT_TO_TREE.out.trees_pre_quality_control_ch,
+                              alignments_ch,
+                              ALIGNMENT_TO_TREE.out.alignment_to_tree_logs_and_reports_ch )
+
+  if (params.external_outgroups_file) {
+    ALIGN_SELECTED_AND_TREE( QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
+                             CHECK_AND_ALIGN.out.external_outgroups_sanitised_ch,
+                             QC_TREES_AND_EXTRACT_FASTA.out.qc_trees_and_extract_fasta_log_and_reports_ch )
+    } else {
+      ALIGN_SELECTED_AND_TREE( QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
+                               [], // pass in empty list in place of sanitised external outgroup file
+                               QC_TREES_AND_EXTRACT_FASTA.out.qc_trees_and_extract_fasta_log_and_reports_ch ) 
+    }
+
+  PRUNE_PARALOGS( ALIGN_SELECTED_AND_TREE.out.pre_paralog_resolution_trees_ch,
+                  ALIGN_SELECTED_AND_TREE.out.align_selected_and_tree_logs_and_reports_ch )
+
+  // Get input pruned trees depending on resolution algorithms supplied:
+  if (params.mo) {
+    mo_ch = PRUNE_PARALOGS.out.pruned_MO_ch
+  } else:
+    mo_ch = []
+
+  if (params.mi) {
+    mi_ch = PRUNE_PARALOGS.out.pruned_MI_ch
+  } else:
+    mi_ch = []
+
+  if (params.rt) {
+    rt_ch = PRUNE_PARALOGS.out.pruned_RT_ch
+  } else:
+    rt_ch = []
+
+  // Get untrimmed or trimmed alignments depending on options supplied:
+  if (!params.no_trimming) {
+    pre_prune_alignments_ch = ALIGN_SELECTED_AND_TREE.out.pre_paralog_resolution_alignments_trimmed_ch
+  } else:
+    pre_prune_alignments_ch = ALIGN_SELECTED_AND_TREE.out.pre_paralog_resolution_alignments_ch
+
+  FINAL_ALIGNMENTS( pre_prune_alignments_ch,
+                    mo_ch,
+                    mi_ch,
+                    rt_ch,
+                    PRUNE_PARALOGS.out.prune_paralogs_logs_and_reports_ch )
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -345,17 +655,18 @@ process CHECK_AND_ALIGN {
   Run the `paragone check and align` command.
   */
 
-  // echo true
+  echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
   input:
-    path(external_outgroups_file)
     path(paralog_folder)
+    path(external_outgroups_file)
+    
 
   output:
     stdout emit: outgroup_coverage_ch
-    path ("00_logs_and_reports"), emit: logs_and_reports_ch
+    path ("00_logs_and_reports"), emit: check_and_align_logs_and_reports_ch
     path ("01_input_paralog_fasta_with_sanitised_filenames"), emit: paralogs_sanatised_filenames_ch
     path ("02_alignments"), emit: alignments_ch
     path ("03_alignments_trimmed"), emit: alignments_trimmed_ch
@@ -364,7 +675,7 @@ process CHECK_AND_ALIGN {
     
 
   script:
-    check_and_align_command = "paragone check_and_align ${paralog_folder} --pool ${params.cpus} --threads ${params.threads} " + check_and_align_command_list.join(' ')
+    check_and_align_command = "paragone check_and_align ${paralog_folder} " + check_and_align_command_list.join(' ')
 
     """
     echo "Executing command: ${check_and_align_command}"
@@ -373,761 +684,165 @@ process CHECK_AND_ALIGN {
 }
 
 
-// process ALIGN_AND_HMMCLEAN_02 {
-//   /*
-//   02a_align_and_hmmclean.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}/02_alignments", mode: 'copy', pattern: "batch_*_alignments"
-//   publishDir "${params.outdir}/03_alignments_hmmcleaned", mode: 'copy', pattern: "batch_*_alignments_hmmcleaned"
-
-//   input:
-//     path(alignments_folder)
-
-//   output:
-//     path("batch_*_alignments")
-//     path("batch_*_alignments_hmmcleaned"), emit: batch_alignments_hmmcleaned_ch
-
-//   script:
-//     if (params.no_stitched_contig) {
-//       no_stitched_contig_string = "-no_stitched_contig"
-//     } else {
-//       no_stitched_contig_string = ''
-//     }
-
-//     if (params.mafft_algorithm) {
-//       mafft_algorithm_string = "-mafft_algorithm ${params.mafft_algorithm}"
-//     } else {
-//       mafft_algorithm_string = ''
-//     }
-
-//     if (params.use_muscle) {
-//       muscle_string = "-use_muscle"
-//     } else {
-//       muscle_string = ''
-//     }
-
-//     if (params.no_stitched_contig) {
-//     """ 
-//     python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
-//     ${alignments_folder} \
-//     ${no_stitched_contig_string} \
-//     ${muscle_string} \
-//     ${mafft_algorithm_string} \
-//     -pool ${params.pool} \
-//     -threads ${params.threads}
-
-//     batch=(batch_*_alignments_clustal_hmmcleaned)
-//     batch_rename=\${batch/clustal_/}
-//     mv \$batch \$batch_rename
-//     """
-
-//     } else {
-//     """ 
-//     python /Yang-and-Smith-RBGV-scripts/02a_align_and_hmmclean.py \
-//     ${alignments_folder} \
-//     ${no_stitched_contig_string} \
-//     ${muscle_string} \
-//     ${mafft_algorithm_string} \
-//     -pool ${params.pool} \
-//     -threads ${params.threads}
-//     """
-//     }
-// }
-
-
-// process ALIGNMENT_TO_TREE_03 {
-//   /*
-//   run script 03a_alignment_to_tree.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}/04_tree_files", mode: 'copy', pattern: "batch_*_alignments_hmmcleaned_tree_files"
-
-//   input:
-//     path(alignments_folder)
-
-//   output:
-//     path("batch_*_alignments_hmmcleaned_tree_files"), emit: batch_treefiles_ch
-
-//   script:
-//     if (params.bootstraps) {
-//       bootstraps_string = "-generate_bootstraps"
-//     } else {
-//       bootstraps_string = ''
-//     }
-
-//     if (params.use_fasttree) {
-//       fasttree_string = "-use_fasttree"
-//     } else {
-//       fasttree_string = ''
-//     }
-
-//     """ 
-//     python /Yang-and-Smith-RBGV-scripts/03a_alignment_to_tree.py \
-//     ${alignments_folder} \
-//     -threads_pool ${params.pool} \
-//     -threads_iqtree ${params.threads} \
-//     ${bootstraps_string} \
-//     ${fasttree_string}
-//     """
-// }
-
-
-// process TRIM_TIPS_04 {
-//   /*
-//   Run script 04_trim_tips.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//     path(trees_folder)
-
-//   output:
-//     path("05_trim_tips")
-
-//   script:
-//     """ 
-//     mkdir all_trees_combined
-//     for trees_folder in ${trees_folder}
-//       do
-//         echo \${trees_folder}
-//         cp -r \${trees_folder}/* all_trees_combined
-//       done
-
-//     python /Yang-and-Smith-RBGV-scripts/04_trim_tips.py \
-//     all_trees_combined \
-//     .treefile \
-//     ${params.process_04_trim_tips_relative_cutoff} \
-//     ${params.process_04_trim_tips_absolute_cutoff} \
-//     05_trim_tips
-//     echo "Finished running trim_tips_04"
-
-//     """
-// }
-
-
-// process MASK_TIPS_05 {
-//   /*
-//   Run script 05_mask_tips_by_taxonID_transcripts.py
-//   */
-
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy', pattern: "06_masked_tips"
-
-//   input:
-//     path(trimmed_tips_folder)
-//     path(alignments_folder)
-
-//   output:
-//     path("06_masked_tips"), emit: masked_tips_ch
-//     path("all_hmmclean_alignments_combined"), emit: all_hmmclean_alignments_combined_ch
-
-//   script:
-//     """
-//     mkdir all_hmmclean_alignments_combined
-//     for alignment_folder in ${alignments_folder}
-//       do
-//         echo \${alignment_folder}
-//         cp -r \${alignment_folder}/* all_hmmclean_alignments_combined
-//       done
-
-//     python /Yang-and-Smith-RBGV-scripts/05_mask_tips_by_taxonID_transcripts.py \
-//     ${trimmed_tips_folder} \
-//     all_hmmclean_alignments_combined \
-//     y \
-//     06_masked_tips
-//     """
-// }
-
-
-// process CUT_LONG_INTERNAL_BRANCHES_06 {
-//   /*
-//   Run script 06_cut_long_internal_branches.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//     path(masked_tips_folder)
-
-//   output:
-//     path("07_cut_internal_branches")
-
-//   script:
-//     """
-//     mkdir 07_cut_internal_branches
-//     python /Yang-and-Smith-RBGV-scripts/06_cut_long_internal_branches.py \
-//     ${masked_tips_folder} \
-//     .mm \
-//     ${params.process_06_branch_length_cutoff} \
-//     ${params.process_06_minimum_taxa} \
-//     07_cut_internal_branches
-//     """
-// }
-
-
-// process WRITE_ALIGNMENT_SUBSET_07 {
-//   /*
-//   Run script 07a_subset_fasta_from_tree_and_batch.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-                    
-//   input:
-//     path(cut_internal_branches_folder)
-//     path(alignment_folder)
-
-//   output:
-//     path("08_selected_alignments_batch_folders/batch_*"), emit: subset_batch_folders_ch
-
-//   script:
-//     """
-//     mkdir 08_selected_alignments
-//     python /Yang-and-Smith-RBGV-scripts/07a_subset_fasta_from_tree_and_batch.py \
-//     ${cut_internal_branches_folder} \
-//     .subtree \
-//     ${alignment_folder} \
-//     08_selected_alignments \
-//     -from_cut_internal_branches \
-//     -batch_size ${params.batch_size}
-//     """
-// }
-
-
-// process REALIGN_AND_IQTREE_08 {
-//   /*
-//   Run script 08_mafft_alignment_and_iqtree.py
-//   */
-
-//   // echo  true
-//   label 'in_container'
-//   publishDir "${params.outdir}/09_outgroups_added", mode: 'copy', pattern: "batch_*_outgroups_added"
-//   publishDir "${params.outdir}/10_realigned", mode: 'copy', pattern: "batch_*_outgroups_added_alignments"
-//   publishDir "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "batch_*_outgroups_added_alignments_tree_files"
-
-//   input:
-//     path(selected_alignments_ch)
-//     path(hmm_cleaned_alignments)
-//     path(external_outgroups_file)
-
-//   output:
-//     path("batch_*_outgroups_added")
-//     path("batch_*_outgroups_added_alignments"), emit: realigned_fasta_ch
-//     path("batch_*_outgroups_added_alignments_tree_files"), emit: realigned_trees_ch
-//     path("in_and_outgroups_list*.txt"), emit: in_and_outgroups_list_ch
-
-
-//   script:
-//     if (params.external_outgroups_file) {
-//       external_outgroups_file_string = "-external_outgroups_file ${external_outgroups_file}"
-//     } else {
-//       external_outgroups_file_string = ''
-//     }
-
-//     if (params.external_outgroups) {
-//       external_outgroups_list = params.external_outgroups?.tokenize(',')
-//       external_outgroups_string = ''
-
-//       for (outgroup in external_outgroups_list) {
-//         external_outgroup_string = "-external_outgroup ${outgroup} "
-//         external_outgroups_string = external_outgroups_string + external_outgroup_string
-//       }
-//     } else {
-//       external_outgroups_string = ''
-//     }
-
-//     if (params.internal_outgroups) {
-//       internal_outgroups_list = params.internal_outgroups?.tokenize(',')
-//       internal_outgroups_string = ''
-
-//     for (outgroup in internal_outgroups_list) {
-//       internal_outgroup_string = "-internal_outgroup ${outgroup} "
-//       internal_outgroups_string = internal_outgroups_string + internal_outgroup_string
-//       }
-//     } else {
-//     internal_outgroups_string = ''
-//     }
-
-//     if (params.no_stitched_contig) {
-//       no_stitched_contig_string = "-no_stitched_contig"
-//     } else {
-//       no_stitched_contig_string = ''
-//     }
-
-//     if (params.use_fasttree) {
-//       fasttree_string = "-use_fasttree"
-//     } else {
-//       fasttree_string = ''
-//     }
-
-//     if (params.use_muscle) {
-//       muscle_string = "-use_muscle"
-//     } else {
-//       muscle_string = ''
-//     }
-
-//     if (params.mafft_algorithm) {
-//       mafft_algorithm_string = "-mafft_algorithm ${params.mafft_algorithm}"
-//     } else {
-//       mafft_algorithm_string = ''
-//     }
-
-//     if (params.no_stitched_contig) {
-//     """
-//     python /Yang-and-Smith-RBGV-scripts/08a_alignment_and_tree.py \
-//     ${hmm_cleaned_alignments} \
-//     ${selected_alignments_ch} \
-//     ${external_outgroups_file_string} \
-//     ${external_outgroups_string} \
-//     ${internal_outgroups_string} \
-//     ${no_stitched_contig_string} \
-//     ${muscle_string} \
-//     ${mafft_algorithm_string} \
-//     ${fasttree_string} \
-//     -threads_pool ${params.pool} \
-//     -threads_mafft ${params.threads}
-
-//     batch_trees=(batch_*_outgroups_added_alignments_clustal_tree_files)
-//     batch_trees_rename=\${batch_trees/clustal_/}
-//     mv \$batch_trees \$batch_trees_rename
-
-
-//     batch_aln=(batch_*_outgroups_added_alignments)
-//     batch_aln_clustal=(batch_*_outgroups_added_alignments_clustal)
-//     rm -r \$batch_aln
-//     mv \$batch_aln_clustal \$batch_aln
-
-
-
-//     """
-//     } else {
-//     """
-//     python /Yang-and-Smith-RBGV-scripts/08a_alignment_and_tree.py \
-//     ${hmm_cleaned_alignments} \
-//     ${selected_alignments_ch} \
-//     ${external_outgroups_file_string} \
-//     ${external_outgroups_string} \
-//     ${internal_outgroups_string} \
-//     ${no_stitched_contig_string} \
-//     ${muscle_string} \
-//     ${mafft_algorithm_string} \
-//     ${fasttree_string} \
-//     -threads_pool ${params.pool} \
-//     -threads_mafft ${params.threads}
-//     """
-//     }
-//   }
-
-
-// process RESOLVE_POLYTOMIES {
-//   /*
-//   Run script resolve_polytomies.py
-//   */
-
-//   label 'in_container'
-//   publishDir "${params.outdir}/11_realigned_trees", mode: 'copy', pattern: "treefiles_polytomies_resolved"
-//   // echo true
-
-//     input:
-//     path(realigned_trees_folder)
-
-//   output:
-//     path("treefiles_polytomies_resolved"), emit: trees_resolved_polytomies_ch
-
-//   script:
-//     """
-//     mkdir all_realigned_trees_combined
-//     for tree_folder in ${realigned_trees_folder}
-//       do
-//         echo \${tree_folder}
-//         cp -r \${tree_folder}/* all_realigned_trees_combined
-//       done
-
-//     python /Yang-and-Smith-RBGV-scripts/resolve_polytomies.py all_realigned_trees_combined
-//     """
-// }
-
-
-// process PRUNE_PARALOGS_MO_09 {
-//   /*
-//   Run script 09_prune_paralogs_MO.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//     path(in_out_file)
-//     path(realigned_resolved_trees_folder)
-
-//   output:
-//     path("12_prune_MO_trees")
-
-//   script:
-//     """
-//     mkdir 12_prune_MO_trees
-
-//     python /Yang-and-Smith-RBGV-scripts/09_prune_paralogs_MO.py \
-//     treefiles_polytomies_resolved \
-//     .treefile \
-//     ${params.process_09_prune_paralog_MO_minimum_taxa} \
-//     12_prune_MO_trees \
-//     ${in_out_file}
-//     """
-// }
-
-
-// process PRUNE_PARALOGS_RT_10 {
-//   /*
-//   Run script 10_prune_paralogs_RT.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//   path(in_out_file)
-//   path(realigned_resolved_trees_folder)
-
-//   output:
-//   path("13_prune_RT_trees")
-
-//   script:
-//   """
-//   mkdir 13_prune_RT_trees
-
-//   python /Yang-and-Smith-RBGV-scripts/10_prune_paralogs_RT.py \
-//   treefiles_polytomies_resolved \
-//   .treefile 13_prune_RT_trees \
-//   ${params.process_10_prune_paralogs_RT_minimum_ingroup_taxa} \
-//   ${in_out_file}
-//   """
-// }
-
-
-// process PRUNE_PARALOGS_MI_11 {
-//   /*
-//   Run script 11_prune_paralogs_MI.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//   path(in_out_file)
-//   path(realigned_resolved_trees_folder)
-
-//   output:
-//   path("14_prune_MI_trees")
-
-//   script:
-//   """
-//   mkdir 14_prune_MI_trees
-
-//   python /Yang-and-Smith-RBGV-scripts/11_prune_paralogs_MI.py \
-//   treefiles_polytomies_resolved \
-//   .treefile \
-//   ${params.process_11_prune_paralogs_MI_relative_tip_cutoff} \
-//   ${params.process_11_prune_paralogs_MI_absolute_tip_cutoff} \
-//   ${params.process_11_prune_paralogs_MI_minimum_taxa} \
-//   14_prune_MI_trees
-
-//   """
-// }
-
-
-// process WRITE_ALIGNMENT_SUBSET_MO_12 {
-//   /*
-//   Run script 07a_subset_fasta_from_tree_and_batch.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//   path(MO_folder)
-//   path(alignment_folder)
-
-//   output:
-//   path("15_selected_alignments_MO_batch_folders/batch_*"), emit: mo_subset_batch_folders_ch
-
-//   script:
-//   """
-//   mkdir all_realignments_combined
-//     for alignment in ${alignment_folder}
-//       do
-//         echo \${alignment}
-//         cp -r \${alignment}/* all_realignments_combined
-//       done
-
-
-//   mkdir 15_selected_alignments_MO
-
-//   python /Yang-and-Smith-RBGV-scripts/07a_subset_fasta_from_tree_and_batch.py \
-//   ${MO_folder} \
-//   .tre \
-//   all_realignments_combined \
-//   15_selected_alignments_MO \
-//   -batch_size ${params.batch_size}
-
-//   mv 08_selected_alignments_batch_folders 15_selected_alignments_MO_batch_folders
-
-//   """
-// }
-
-
-// process WRITE_ALIGNMENT_SUBSET_RT_13 {
-//   /*
-//   Run script 07a_subset_fasta_from_tree_and_batch.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//   path(RT_folder)
-//   path(alignment_folder)
-
-//   output:
-//   path("16_selected_alignments_RT_batch_folders/batch_*"), emit: rt_subset_batch_folders_ch
-
-//   script:
-//   """
-//   mkdir all_realignments_combined
-//     for alignment in ${alignment_folder}
-//       do
-//         echo \${alignment}
-//         cp -r \${alignment}/* all_realignments_combined
-//       done
-
-//   mkdir 16_selected_alignments_RT
-
-//   python /Yang-and-Smith-RBGV-scripts/07a_subset_fasta_from_tree_and_batch.py \
-//   ${RT_folder} \
-//   .tre \
-//   all_realignments_combined \
-//   16_selected_alignments_RT \
-//   -batch_size ${params.batch_size}
-
-//   mv 08_selected_alignments_batch_folders 16_selected_alignments_RT_batch_folders
-//   """
-// }
-
-
-// process WRITE_ALIGNMENT_SUBSET_MI_14 {
-//   /*
-//   Run script 07a_subset_fasta_from_tree_and_batch.py
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}", mode: 'copy'
-
-//   input:
-//   path(MI_folder)
-//   path(alignment_folder)
-
-//   output:
-//   path("17_selected_alignments_MI_batch_folders/batch_*"), emit: mi_subset_batch_folders_ch
-
-//   script:
-//   """
-//   mkdir all_realignments_combined
-//     for alignment in ${alignment_folder}
-//       do
-//         echo \${alignment}
-//         cp -r \${alignment}/* all_realignments_combined
-//       done
-
-//   mkdir 17_selected_alignments_MI
-
-//   python /Yang-and-Smith-RBGV-scripts/07a_subset_fasta_from_tree_and_batch.py \
-//   ${MI_folder} \
-//   .tre \
-//   all_realignments_combined \
-//   17_selected_alignments_MI \
-//   -batch_size ${params.batch_size}
-
-//   mv 08_selected_alignments_batch_folders 17_selected_alignments_MI_batch_folders
-//   """
-// }
-
-
-// process STRIP_NAMES_AND_REALIGN_MO_15 {
-//   /*
-//   Run script 12a_strip_names_and_align.py for MO
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}/18_alignments_stripped_names_MO", mode: 'copy', pattern: "batch_*_stripped_names/*", saveAs: { filename -> file(filename).getName() }
-//   publishDir "${params.outdir}/19_alignments_stripped_names_MO_realigned", mode: 'copy', pattern: "batch_*_alignments/*", saveAs: { filename -> file(filename).getName() }
-
-
-//   input:
-//   path(selected_alignments_MO)
-
-//   output:
-//   path("batch_*_stripped_names/*"), emit: stripped_names_ch
-//   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
-
-//   script:
-//   if (params.no_stitched_contig) {
-//       no_stitched_contig_string = "-no_stitched_contig"
-//     } else {
-//       no_stitched_contig_string = ''
-//     }
-
-//   if (params.no_stitched_contig) {
-//   """
-//   echo ${selected_alignments_MO}
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_MO} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string} 
-
-
-//   batch_aln=(batch_*_stripped_names_alignments)
-//   batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
-//   rm -r \$batch_aln
-//   mv \$batch_aln_clustal \$batch_aln
-//   """
-
-//   } else {
-//   """
-//   echo ${selected_alignments_MO}
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_MO} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string} 
-//   """
-
-//   }
-// }
-
-
-// process STRIP_NAMES_AND_REALIGN_RT_16 {
-//   /*
-//   Run script 12a_strip_names_and_align.py for RT
-//   */
-
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}/20_alignments_stripped_names_RT", mode: 'copy', pattern: "batch_*_stripped_names/*", saveAs: { filename -> file(filename).getName() }
-//   publishDir "${params.outdir}/21_alignments_stripped_names_RT_realigned", mode: 'copy', pattern: "batch_*_alignments/*", saveAs: { filename -> file(filename).getName() }
-
-//   input:
-//   path(selected_alignments_RT)
-
-//   output:
-//   path("batch_*_stripped_names/*"), emit: stripped_names_ch
-//   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
-
-//   script:
-//   if (params.no_stitched_contig) {
-//       no_stitched_contig_string = "-no_stitched_contig"
-//     } else {
-//       no_stitched_contig_string = ''
-//     }
-
-//   if (params.no_stitched_contig) {
-//   """
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_RT} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string}
-
-//   batch_aln=(batch_*_stripped_names_alignments)
-//   batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
-//   rm -r \$batch_aln
-//   mv \$batch_aln_clustal \$batch_aln
-//   """
-
-//   } else {
-//   """
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_RT} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string}
-//   """
-//   }
-// }
-
-
-// process STRIP_NAMES_AND_REALIGN_MI_17 {
-//   /*
-//   Run script 12a_strip_names_and_align.py for MI
-//   */
-
-//   // echo true
-//   label 'in_container'
-//   publishDir "${params.outdir}/22_alignments_stripped_names_MI", mode: 'copy', pattern: "batch_*_stripped_names/*", saveAs: { filename -> file(filename).getName() }
-//   publishDir "${params.outdir}/23_alignments_stripped_names_MI_realigned", mode: 'copy', pattern: "batch_*_alignments/*"  , saveAs: { filename -> file(filename).getName() }
-
-//   input:
-//   path(selected_alignments_MI)
-
-//   output:
-//   path("batch_*_stripped_names/*"), emit: stripped_names_ch
-//   path("batch_*_alignments/*"), emit: stripped_names_aligned_ch
-
-//   script:
-//   if (params.no_stitched_contig) {
-//       no_stitched_contig_string = "-no_stitched_contig"
-//     } else {
-//       no_stitched_contig_string = ''
-//     }
-
-//   if (params.no_stitched_contig) {
-//   """
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_MI} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string}
-
-//   batch_aln=(batch_*_stripped_names_alignments)
-//   batch_aln_clustal=(batch_*_stripped_names_alignments_clustal)
-//   rm -r \$batch_aln
-//   mv \$batch_aln_clustal \$batch_aln
-//   """
-
-//   } else {
-//   """
-//   python /Yang-and-Smith-RBGV-scripts/12a_strip_names_and_align.py \
-//   ${selected_alignments_MI} \
-//   -threads_pool ${params.pool} \
-//   -threads_mafft ${params.threads} \
-//   ${no_stitched_contig_string}
-//   """
-//   }
-
-
-
-
+process ALIGNMENT_TO_TREE {
+  /*
+  Run the `paragone alignment_to_tree` command.
+  */
+
+  echo true
+  label 'in_container'
+  publishDir "${params.outdir}", mode: 'copy'
+
+  input:
+    path(alignments_folder)
+    path(logs_and_reports)
+
+  output:
+    path ("00_logs_and_reports"), emit: alignment_to_tree_logs_and_reports_ch
+    path ("05_trees_pre_quality_control"), emit: trees_pre_quality_control_ch
+
+  script:
+    alignment_to_tree_command = "paragone alignment_to_tree ${alignments_folder} " + alignment_to_tree_command_list.join(' ')
+    
+    """
+    echo "Executing command: ${alignment_to_tree_command}"
+    ${alignment_to_tree_command}
+    """
+}
+
+
+process QC_TREES_AND_EXTRACT_FASTA {
+  /*
+  Run the `paragone qc_trees_and_extract_fasta` command.
+  */
+
+  echo true
+  label 'in_container'
+  publishDir "${params.outdir}", mode: 'copy'
+
+  input:
+    path(trees_pre_quality_control)
+    path(alignments_folder)
+    path(logs_and_reports)
+
+  output:
+    path ("00_logs_and_reports"), emit: qc_trees_and_extract_fasta_log_and_reports_ch
+    path("06_trees_trimmed")
+    path("07_trees_trimmed_masked")
+    path("08_trees_trimmed_masked_cut")
+    path("09_sequences_from_qc_trees"), emit: sequences_from_qc_trees_ch
+
+  script:
+    qc_trees_and_extract_fasta_command = "paragone qc_trees_and_extract_fasta ${alignments_folder} " + qc_trees_and_extract_fasta_command_list.join(' ')
+    
+    """
+    echo "Executing command: ${qc_trees_and_extract_fasta_command}"
+    ${qc_trees_and_extract_fasta_command}
+    """
+}
+
+
+process ALIGN_SELECTED_AND_TREE {
+  /*
+  Run the `paragone align_selected_and_tree` command.
+  */
+
+  echo true
+  label 'in_container'
+  publishDir "${params.outdir}", mode: 'copy'
+
+  input:
+    path(alignments_from_qc_trees)
+    path(external_outgroups_sanitised)
+    path(logs_and_reports)
+
+  output:
+    path ("00_logs_and_reports"), emit: align_selected_and_tree_logs_and_reports_ch
+    path("10_sequences_from_qc_outgroups_added")
+    path("11_pre_paralog_resolution_alignments"), emit: pre_paralog_resolution_alignments_ch
+    path("12_pre_paralog_resolution_alignments_trimmed"), emit: pre_paralog_resolution_alignments_trimmed_ch optional true
+    path("13_pre_paralog_resolution_trees"), emit: pre_paralog_resolution_trees_ch
+
+  script:
+    align_selected_and_tree_command = "paragone align_selected_and_tree ${alignments_from_qc_trees} " + align_selected_and_tree_command_list.join(' ')
+    
+    """
+    echo "Executing command: ${align_selected_and_tree_command}"
+    ${align_selected_and_tree_command}
+    """
+}
+
+
+process PRUNE_PARALOGS {
+  /*
+  Run the `paragone prune_paralogs` command.
+  */
+
+  echo true
+  label 'in_container'
+  publishDir "${params.outdir}", mode: 'copy'
+
+  input:
+    path(pre_paralog_resolution_trees)
+    path(logs_and_reports)
+
+  output:
+    path ("00_logs_and_reports"), emit: prune_paralogs_logs_and_reports_ch
+    path("14_pruned_MO"), emit: pruned_MO_ch optional true
+    path("15_pruned_MI"), emit: pruned_MI_ch optional true
+    path("16_pruned_RT"), emit: pruned_RT_ch optional true
+
+
+  script:
+    prune_paralogs_command = "paragone prune_paralogs " + prune_paralogs_command_list.join(' ')
+    
+    """
+    echo "Executing command: ${prune_paralogs_command}"
+    ${prune_paralogs_command}
+    """
+}
+
+
+process FINAL_ALIGNMENTS {
+  /*
+  Run the `paragone final_alignments` command.
+  */
+
+  echo true
+  label 'in_container'
+  publishDir "${params.outdir}", mode: 'copy'
+
+  input:
+    path(pre_prune_alignments)
+    path(mo_trees)
+    path(mi_trees)
+    path(rt_trees)
+    path(logs_and_reports)
+
+
+  output:
+    path ("00_logs_and_reports"), emit: final_alignments_logs_and_reports_ch
+    path("17_selected_sequences_MO") optional true
+    path("18_selected_sequences_MI") optional true
+    path("19_selected_sequences_RT") optional true
+    path("20_MO_stripped_names") optional true
+    path("21_MI_stripped_names") optional true
+    path("22_RT_stripped_names") optional true
+    path("23_MO_final_alignments") optional true
+    path("24_MI_final_alignments") optional true
+    path("25_RT_final_alignments") optional true
+    path("26_MO_final_alignments_trimmed") optional true
+    path("27_MI_final_alignments_trimmed") optional true
+    path("28_RT_final_alignments_trimmed") optional true
+
+  script:
+    final_alignments_command = "paragone final_alignments --keep_intermediate_files " + final_alignments_command_list.join(' ')
+    
+    """
+    echo "Executing command: ${final_alignments_command}"
+    ${final_alignments_command}
+    """
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
