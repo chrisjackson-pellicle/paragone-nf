@@ -8,7 +8,7 @@ This pipeline makes use of the **paralogy resolution** (also described as **orth
 
 ## paragone-nf: containerised and pipelined using Singularity and Nextflow
 
-The software [ParaGone][https://github.com/chrisjackson-pellicle/ParaGone] includes modified versions of the Yang and Smith scripts (with added functionality, logging and reporting), along with new scripts to facilitate seamless running of the pipeline. To further simplify the process, here I’ve provided a [Singularity][13] container based on the Linux distribution Ubuntu 22.04, containing Paragone alogn with all the dependencies ([IQTree][3], [Clustal Omega][6], [MAFFT][5], [BioPython][15], [HMMCleaner][2], [trimal][1], [FastTreeMP][23], [TreeShrink][https://github.com/uym2/TreeShrink]). The container is called `hybpiper-paragone.sif`.
+The software [ParaGone](https://github.com/chrisjackson-pellicle/ParaGone) includes modified versions of the Yang and Smith scripts (with added functionality, logging and reporting), along with new scripts to facilitate seamless running of the pipeline. To further simplify the process, here I’ve provided a [Singularity][13] container based on the Linux distribution Ubuntu 22.04, containing Paragone along with all the dependencies: [IQTree][3], [Clustal Omega][6], [MAFFT][5], [BioPython][15], [HMMCleaner][2], [trimal][1], [FastTreeMP][23], [TreeShrink](https://github.com/uym2/TreeShrink). The container is called `hybpiper-paragone.sif`.
 
 To run the paralogy resolution pipeline using this container, I’ve provided a [Nextflow][14] script that uses the software in the Singularity container. This pipeline runs all steps with a single command. The pipeline script is called `paragone.nf`. It comes with an associated config file called `paragone.config`. The only input required is a folder containing `.fasta` files for each of your target-capture loci, including paralogs, and an optional `.fasta` file containing outgroup sequences (used by some of the paralogy resolution methods, see below). The number of parallel processes running at any time, as well as computing resources given to each process (e.g. number of CPUs, amount of RAM etc) can be configured by the user by modifying the provided config file. The pipeline can be run directly on your local computer, or on an HPC system submitting jobs via a scheduler (e.g. SLURM, PBS, etc).
 
@@ -341,7 +341,7 @@ etc.
 *07 July 2023*
 
 - Add version to `paragone.nf` script;  v1.0.0
-- Refactor `paragone.nf` for to use the Python package [`ParaGone`][https://github.com/chrisjackson-pellicle/ParaGone].
+- Refactor `paragone.nf` for to use the Python package [`ParaGone`](https://github.com/chrisjackson-pellicle/ParaGone).
 - New Singularity container with `ParaGone` installed.
 - Added a `conda` and `conda_slurm` profile. This allows the pipeline to be run using conda packages rather than the Singularity container. The corresponding conda environment is created in the Nextflow `work` directory.
 
