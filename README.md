@@ -378,4 +378,3 @@ etc.
 [21]: https://github.com/chrisjackson-pellicle/paragone-nf/wiki/Additional-pipeline-features-and-details "Link to Additional-pipeline-features-and-details Wiki entry"
 [22]: https://github.com/chrisjackson-pellicle/paragone-nf/wiki/Additional-pipeline-features-and-details#managing-computing-resources "Link to managing-computing-resources Wiki section"
 [23]: http://www.microbesonline.org/fasttree/#OpenMP "Link to FastTree documentation"
-[24]: https://www.drive5.com/muscle/downloads.htm "Link to MUSCLE download and documentation"
