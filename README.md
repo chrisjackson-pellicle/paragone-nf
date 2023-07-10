@@ -344,6 +344,9 @@ etc.
 - Refactor `paragone.nf` for to use the Python package [`ParaGone`](https://github.com/chrisjackson-pellicle/ParaGone).
 - New Singularity container with `ParaGone` installed.
 - Added a `conda` and `conda_slurm` profile to the `paragone.config` file. This allows the pipeline to be run using conda packages rather than the Singularity container. The corresponding conda environment is created in the Nextflow `work` directory.
+- Trimal options can now be provided by the user.
+- One or more of the paralogy resolution algorithms now need to be explicitly provided (`--mo`, `--mi`, `--rt`)
+- Paralog fasta files are now provided using the parameter `--gene_fasta_directory`.
 
 *28 November 2022*
 
