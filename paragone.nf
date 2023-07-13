@@ -549,8 +549,8 @@ if (params.rt) {
   final_alignments_command_list << "--rt"
 }
 
-if (params.new_mo_algorithm) {
-  prune_paralogs_command_list << "--new_mo_algorithm"
+if (params.mo_algorithm_paragone) {
+  prune_paralogs_command_list << "--mo_algorithm_paragone"
 }
 
 if (params.minimum_taxa) {
