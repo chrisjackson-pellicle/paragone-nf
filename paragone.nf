@@ -655,7 +655,7 @@ process CHECK_AND_ALIGN {
   Run the `paragone check and align` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
@@ -689,7 +689,7 @@ process ALIGNMENT_TO_TREE {
   Run the `paragone alignment_to_tree` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
@@ -716,7 +716,7 @@ process QC_TREES_AND_EXTRACT_FASTA {
   Run the `paragone qc_trees_and_extract_fasta` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
@@ -747,7 +747,7 @@ process ALIGN_SELECTED_AND_TREE {
   Run the `paragone align_selected_and_tree` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
@@ -778,7 +778,7 @@ process PRUNE_PARALOGS {
   Run the `paragone prune_paralogs` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
@@ -808,7 +808,7 @@ process FINAL_ALIGNMENTS {
   Run the `paragone final_alignments` command.
   */
 
-  echo true
+  // echo true
   label 'in_container'
   publishDir "${params.outdir}", mode: 'copy'
 
