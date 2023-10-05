@@ -1,6 +1,6 @@
 # paragone-nf: a paralogy resolution pipeline
 
-Current version: 1.0.0 (July 2023)
+Current version: 1.0.1 (October 2023)
 
 ## Original orthology inference manuscript, documentation and scripts
 
@@ -337,6 +337,11 @@ e.g.
 etc.
 
 ## Changelog
+
+*05 October 2023*
+
+- Fixed a bug with the Nextflow script that resulted in 'internal' outgroup sequences not being added back in to alignments prior to paralogy resolution, if they had been removed by previous alignment QC steps.
+- Update version of `paragone.nf` script to v1.0.1
 
 *07 July 2023*
 

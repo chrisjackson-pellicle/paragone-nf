@@ -11,7 +11,7 @@ nextflow.enable.dsl=2
 /////////////////////////////////////////////////////////////////////////////////////////
 
 if( params.remove('version') ) {
-    println('paragone-nf version 1.0.0, running ParaGone version 0.0.14c')
+    println('paragone-nf version 1.0.1, running ParaGone version 0.0.14c')
     exit 0
 } 
 
@@ -602,11 +602,13 @@ workflow {
                               ALIGNMENT_TO_TREE.out.alignment_to_tree_logs_and_reports_ch )
 
   if (params.external_outgroups_file) {
-    ALIGN_SELECTED_AND_TREE( QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
+    ALIGN_SELECTED_AND_TREE( alignments_ch,
+                             QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
                              CHECK_AND_ALIGN.out.external_outgroups_sanitised_ch,
                              QC_TREES_AND_EXTRACT_FASTA.out.qc_trees_and_extract_fasta_log_and_reports_ch )
     } else {
-      ALIGN_SELECTED_AND_TREE( QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
+      ALIGN_SELECTED_AND_TREE( alignments_ch,
+                               QC_TREES_AND_EXTRACT_FASTA.out.sequences_from_qc_trees_ch,
                                [], // pass in empty list in place of sanitised external outgroup file
                                QC_TREES_AND_EXTRACT_FASTA.out.qc_trees_and_extract_fasta_log_and_reports_ch ) 
     }
@@ -752,6 +754,7 @@ process ALIGN_SELECTED_AND_TREE {
   publishDir "${params.outdir}", mode: 'copy'
 
   input:
+    path(qc_alignments)
     path(alignments_from_qc_trees)
     path(external_outgroups_sanitised)
     path(logs_and_reports)
@@ -764,7 +767,7 @@ process ALIGN_SELECTED_AND_TREE {
     path("13_pre_paralog_resolution_trees"), emit: pre_paralog_resolution_trees_ch
 
   script:
-    align_selected_and_tree_command = "paragone align_selected_and_tree ${alignments_from_qc_trees} " + align_selected_and_tree_command_list.join(' ')
+    align_selected_and_tree_command = "paragone align_selected_and_tree ${qc_alignments} " + align_selected_and_tree_command_list.join(' ')
     
     """
     echo "Executing command: ${align_selected_and_tree_command}"
