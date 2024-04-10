@@ -631,9 +631,9 @@ workflow {
 
   if (params.rt) {
     rt_ch = PRUNE_PARALOGS.out.pruned_RT_ch
-  } else {}
+  } else {
     rt_ch = []
- }
+  }
 
   // Get untrimmed or trimmed alignments depending on options supplied:
   if (!params.no_trimming) {
