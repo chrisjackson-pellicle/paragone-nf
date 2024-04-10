@@ -619,24 +619,28 @@ workflow {
   // Get input pruned trees depending on resolution algorithms supplied:
   if (params.mo) {
     mo_ch = PRUNE_PARALOGS.out.pruned_MO_ch
-  } else:
+  } else {
     mo_ch = []
+  }
 
   if (params.mi) {
     mi_ch = PRUNE_PARALOGS.out.pruned_MI_ch
-  } else:
+  } else {
     mi_ch = []
+  }
 
   if (params.rt) {
     rt_ch = PRUNE_PARALOGS.out.pruned_RT_ch
-  } else:
+  } else {}
     rt_ch = []
+ }
 
   // Get untrimmed or trimmed alignments depending on options supplied:
   if (!params.no_trimming) {
     pre_prune_alignments_ch = ALIGN_SELECTED_AND_TREE.out.pre_paralog_resolution_alignments_trimmed_ch
-  } else:
+  } else {
     pre_prune_alignments_ch = ALIGN_SELECTED_AND_TREE.out.pre_paralog_resolution_alignments_ch
+  }
 
   FINAL_ALIGNMENTS( pre_prune_alignments_ch,
                     mo_ch,
