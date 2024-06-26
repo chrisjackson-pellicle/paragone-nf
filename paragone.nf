@@ -11,7 +11,7 @@ nextflow.enable.dsl=2
 /////////////////////////////////////////////////////////////////////////////////////////
 
 if( params.remove('version') ) {
-    println('paragone-nf version 1.0.1, running ParaGone version 0.0.14c')
+    println('paragone-nf version 1.0.2, running ParaGone version 1.1.0')
     exit 0
 } 
 
@@ -52,6 +52,7 @@ allowed_params = [
                   "trimal_gw",
                   "trimal_sw",
                   "no_cleaning",
+                  "cleaning_cutoff",
                   "run_profiler",
                   "generate_bootstraps",
                   "use_fasttree",
@@ -239,7 +240,10 @@ def helpMessage() {
       --trimal_sw                 (half) Window size only applies to statistics/methods based 
                                   on 'similarity, when trimming alignments with Trimal
 
-      --no_cleaning               Do not clean alignments using HmmCleaner.pl
+      --no_cleaning               Do not clean alignments using TAPER
+
+      --cleaning_cutoff           Cutoff value to pass to TAPER. Lower will perform more aggressive 
+                                  cleaning. Default is 3
 
       --run_profiler              If supplied, run the subcommand using cProfile. Saves a 
                                   *.csv file of results
@@ -589,9 +593,9 @@ workflow {
   } else if (params.no_cleaning && !params.no_trimming) {
     alignments_ch = CHECK_AND_ALIGN.out.alignments_trimmed_ch
   } else if (params.no_trimming && !params.no_cleaning) {
-    alignments_ch = CHECK_AND_ALIGN.out.alignments_hmmcleaned_ch
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_cleaned_ch
   } else {
-    alignments_ch = CHECK_AND_ALIGN.out.alignments_trimmed_hmmcleaned_ch
+    alignments_ch = CHECK_AND_ALIGN.out.alignments_trimmed_cleaned_ch
   }
 
   ALIGNMENT_TO_TREE( alignments_ch,
@@ -676,7 +680,7 @@ process CHECK_AND_ALIGN {
     path ("01_input_paralog_fasta_with_sanitised_filenames"), emit: paralogs_sanatised_filenames_ch
     path ("02_alignments"), emit: alignments_ch
     path ("03_alignments_trimmed"), emit: alignments_trimmed_ch
-    path ("04_alignments_trimmed_hmmcleaned"), emit: alignments_trimmed_hmmcleaned_ch
+    path ("04_alignments_trimmed_cleaned"), emit: alignments_trimmed_cleaned_ch
     path("*sanitised.*"), emit: external_outgroups_sanitised_ch optional true
     
 
