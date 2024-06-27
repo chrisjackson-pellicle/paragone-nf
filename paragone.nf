@@ -516,6 +516,10 @@ if (params.no_cleaning) {
   check_and_align_command_list << "--no_cleaning"
 }
 
+if (params.cleaning_cutoff) {
+  check_and_align_command_list << "--cleaning_cutoff ${params.cleaning_cutoff}"
+}
+
 if (params.generate_bootstraps) {
   alignment_to_tree_command_list << "--generate_bootstraps"
   align_selected_and_tree_command_list << "--generate_bootstraps"
